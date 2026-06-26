@@ -1,895 +1,1025 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VitalFit — Your Health, Measured</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --bg: #0b0f1a;
-      --surface: #121828;
-      --surface2: #1a2236;
-      --border: #1e2d47;
-      --accent: #00e5a0;
-      --accent2: #0077ff;
-      --warn: #ff6b35;
-      --text: #e8edf5;
-      --muted: #6b7fa3;
-      --card: #151e30;
-      --radius: 16px;
-      --radius-sm: 8px;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VitalFit — Your Health, Measured</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#501f38; --surface:#243863ef; --surface2:#f9f9f7; --surface3:#111112;
+  --border:#1e2d47; --border2:#fafafa;
+  --accent:#00e5a0; --accent2:#cbd7ea; --accent3:#a78bfa;
+  --warn:#f59e0b; --danger:#ef4444;
+  --text:#e8edf5; --muted:#6b7fa3; --muted2:#4a5a78;
+  --card:#131c2e; --card2:#0f1728;
+  --radius:14px; --radius-sm:8px; --radius-xs:5px;
+  --shadow:0 4px 24px rgba(0,0,0,.35);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── PAGE SYSTEM ── */
+.page{display:none;min-height:100vh}
+.page.active{display:block}
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
-    /* ── PAGE SYSTEM ── */
-    .page { display: none; min-height: 100vh; }
-    .page.active { display: block; }
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:62px;
+  background:rgba(11,15,26,.92);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:19px;color:var(--accent);cursor:pointer;letter-spacing:-.5px;display:flex;align-items:center;gap:8px}
+.nav-logo-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--accent),#c4d68e);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.nav-logo span{color:var(--text)}
+.nav-center{display:flex;gap:2px;align-items:center}
+.nav-link{background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13.5px;padding:7px 14px;border-radius:7px;cursor:pointer;transition:all .18s;letter-spacing:.1px}
+.nav-link:hover{color:var(--text);background:var(--surface2)}
+.nav-link.active{color:var(--accent);background:rgba(0,229,160,.08)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;cursor:pointer;border:2px solid transparent;transition:border-color .2s}
+.nav-avatar:hover{border-color:var(--accent)}
+.nav-notif{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:6px;border-radius:7px;transition:all .18s;position:relative}
+.nav-notif:hover{color:var(--text);background:var(--surface2)}
+.nav-notif::after{content:'3';position:absolute;top:2px;right:2px;background:var(--danger);color:#fff;font-size:9px;font-weight:700;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif}
+.btn-nav-cta{background:var(--accent);color:#000;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:700;padding:8px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .18s}
+.btn-nav-cta:hover{opacity:.88;transform:translateY(-1px)}
 
-    /* ── NAV ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 48px; height: 64px;
-      background: rgba(11,15,26,0.85);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800; font-size: 20px;
-      color: var(--accent);
-      cursor: pointer; letter-spacing: -0.5px;
-    }
-    .nav-logo span { color: var(--text); }
-    .nav-links { display: flex; gap: 8px; align-items: center; }
-    .nav-links button {
-      background: none; border: none; color: var(--muted);
-      font-family: 'DM Sans', sans-serif; font-size: 14px;
-      padding: 8px 16px; border-radius: 8px;
-      cursor: pointer; transition: all .2s;
-    }
-    .nav-links button:hover { color: var(--text); background: var(--surface2); }
-    .nav-links button.active { color: var(--accent); }
-    .nav-cta {
-      background: var(--accent) !important; color: #000 !important;
-      font-weight: 600 !important; border-radius: 8px !important;
-    }
-    .nav-cta:hover { opacity: .9; transform: translateY(-1px); }
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;border:none;cursor:pointer;transition:all .18s;text-decoration:none;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#000;font-weight:700}
+.btn-primary:hover{opacity:.88;transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,229,160,.22)}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border2)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2);background:var(--surface2)}
+.btn-danger{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25)}
+.btn-danger:hover{background:rgba(239,68,68,.2)}
+.btn-sm{padding:7px 14px;font-size:13px}
+.btn-lg{padding:14px 28px;font-size:15px;font-weight:700}
+.btn-icon{width:36px;height:36px;padding:0;justify-content:center;border-radius:8px}
 
-    /* ── BUTTONS ── */
-    .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 14px 28px; border-radius: var(--radius-sm);
-      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
-      border: none; cursor: pointer; transition: all .2s; text-decoration: none;
-    }
-    .btn-primary { background: var(--accent); color: #000; font-weight: 700; }
-    .btn-primary:hover { opacity: .9; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,229,160,.25); }
-    .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-    .btn-ghost { background: var(--surface2); color: var(--text); }
-    .btn-ghost:hover { background: var(--border); }
-    .btn-danger { background: var(--warn); color: #fff; font-weight: 600; }
+/* ── TAGS / BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.1px}
+.badge-green{background:rgba(0,229,160,.12);color:var(--accent);border:1px solid rgba(0,229,160,.18)}
+.badge-blue{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.18)}
+.badge-amber{background:rgba(245,158,11,.12);color:var(--warn);border:1px solid rgba(245,158,11,.18)}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.18)}
+.badge-purple{background:rgba(167,139,250,.12);color:var(--accent3);border:1px solid rgba(167,139,250,.18)}
 
-    /* ── CARDS ── */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-    }
-    .card-sm { padding: 20px; border-radius: var(--radius-sm); }
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.card-sm{padding:16px;border-radius:var(--radius-sm)}
 
-    /* ── FORM ── */
-    .form-group { display: flex; flex-direction: column; gap: 8px; }
-    .form-label { font-size: 13px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
-    .form-input {
-      background: var(--surface2); border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm); padding: 12px 16px;
-      color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px;
-      transition: border-color .2s; width: 100%;
-    }
-    .form-input:focus { outline: none; border-color: var(--accent); }
-    .form-input::placeholder { color: var(--muted); }
-    select.form-input { cursor: pointer; }
+/* ── FORM ELEMENTS ── */
+.form-group{display:flex;flex-direction:column;gap:6px}
+.label{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.input{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color .18s;width:100%}
+.input:focus{outline:none;border-color:var(--accent)}
+.input::placeholder{color:var(--muted2)}
+select.input{cursor:pointer}
 
-    /* ── TAGS ── */
-    .tag {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
-    }
-    .tag-green { background: rgba(0,229,160,.15); color: var(--accent); }
-    .tag-blue { background: rgba(0,119,255,.15); color: #4da6ff; }
-    .tag-orange { background: rgba(255,107,53,.15); color: var(--warn); }
-    .tag-yellow { background: rgba(255,200,50,.15); color: #ffc832; }
-    .tag-red { background: rgba(255,60,60,.15); color: #ff5c5c; }
+/* ── PROGRESS ── */
+.progress{background:var(--surface2);border-radius:999px;overflow:hidden}
+.progress-bar{height:100%;border-radius:999px;transition:width .6s ease}
+.prog-h4{height:4px}
+.prog-h6{height:6px}
+.prog-h8{height:8px}
+.prog-h10{height:10px}
 
-    /* ── PROGRESS BAR ── */
-    .progress-bar {
-      background: var(--surface2); border-radius: 999px;
-      height: 8px; overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%; border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent2), var(--accent));
-      transition: width .6s ease;
-    }
+/* ── SECTION HELPERS ── */
+.section-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.8px;color:var(--accent);padding:5px 12px;background:rgba(0,229,160,.08);border-radius:999px;border:1px solid rgba(0,229,160,.18);margin-bottom:18px}
+.section-eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 
-    /* ── SECTION ── */
-    .section { padding: 80px 48px; }
-    .section-sm { padding: 40px 48px; }
-    .container { max-width: 1200px; margin: 0 auto; }
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;right:28px;z-index:9999;padding:12px 20px;border-radius:10px;font-weight:600;font-size:13.5px;transform:translateY(20px) scale(.96);opacity:0;transition:all .28s;pointer-events:none;display:flex;align-items:center;gap:8px}
+.toast.show{transform:translateY(0) scale(1);opacity:1}
+.toast-success{background:var(--accent);color:#000}
+.toast-error{background:var(--danger);color:#fff}
+.toast-info{background:var(--accent2);color:#fff}
 
-    /* ══════════════════════════════
-       HOME PAGE
-    ══════════════════════════════ */
-    #page-home { padding-top: 64px; }
+/* ── MODAL OVERLAY ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:32px;max-width:480px;width:100%;position:relative}
+.modal-close{position:absolute;top:16px;right:16px;background:var(--surface2);border:none;color:var(--muted);font-size:18px;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.modal-close:hover{color:var(--text);background:var(--border)}
 
-    .hero {
-      min-height: calc(100vh - 64px);
-      display: grid; grid-template-columns: 1fr 1fr;
-      align-items: center; gap: 80px;
-      padding: 80px 48px;
-      max-width: 1300px; margin: 0 auto;
-      position: relative;
-    }
-    .hero::before {
-      content: '';
-      position: absolute; top: 10%; right: 30%;
-      width: 600px; height: 600px;
-      background: radial-gradient(ellipse, rgba(0,229,160,.07) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .hero-eyebrow {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 12px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 1.5px; color: var(--accent);
-      padding: 6px 14px; background: rgba(0,229,160,.1);
-      border-radius: 999px; border: 1px solid rgba(0,229,160,.2);
-      margin-bottom: 24px;
-    }
-    .hero-eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
-    .hero-title {
-      font-family: 'Syne', sans-serif; font-size: clamp(44px,5vw,72px);
-      font-weight: 800; line-height: 1.05; letter-spacing: -2px;
-      margin-bottom: 24px;
-    }
-    .hero-title .accent { color: var(--accent); }
-    .hero-subtitle { font-size: 18px; color: var(--muted); line-height: 1.7; margin-bottom: 40px; max-width: 480px; }
-    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-    .hero-stats { display: flex; gap: 40px; margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--border); }
-    .hero-stat-num { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; color: var(--accent); }
-    .hero-stat-label { font-size: 13px; color: var(--muted); margin-top: 2px; }
+/* ════════════════════════
+   HOME PAGE
+════════════════════════ */
+#page-home{padding-top:62px}
+.hero{min-height:calc(100vh - 62px);display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:72px;padding:80px 60px;max-width:1280px;margin:0 auto;position:relative}
+.hero::before{content:'';position:absolute;top:5%;right:25%;width:700px;height:700px;background:radial-gradient(ellipse,rgba(0,229,160,.06) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:10%;left:10%;width:500px;height:500px;background:radial-gradient(ellipse,rgba(59,130,246,.04) 0%,transparent 70%);pointer-events:none}
+.hero-title{font-family:'Syne',sans-serif;font-size:clamp(42px,4.5vw,68px);font-weight:800;line-height:1.04;letter-spacing:-2.5px;margin-bottom:20px}
+.hero-title em{color:var(--accent);font-style:normal}
+.hero-sub{font-size:16.5px;color:var(--muted);line-height:1.72;margin-bottom:36px;max-width:440px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:48px}
+.hero-trust{display:flex;align-items:center;gap:16px}
+.hero-trust-avatars{display:flex}
+.hero-trust-avatars div{width:30px;height:30px;border-radius:50%;border:2px solid var(--bg);margin-left:-8px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.hero-trust-avatars div:first-child{margin-left:0}
+.hero-trust-text{font-size:12.5px;color:var(--muted)}
+.hero-trust-text strong{color:var(--text)}
+.hero-widget{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:30px;position:relative;overflow:hidden}
+.hero-widget::before{content:'';position:absolute;bottom:-60px;right:-60px;width:220px;height:220px;background:radial-gradient(ellipse,rgba(0,229,160,.1),transparent 70%);pointer-events:none}
+.hero-widget-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.bmi-num{font-family:'DM Mono',monospace;font-size:52px;font-weight:500;text-align:center;line-height:1;margin-bottom:6px}
+.bmi-cat{text-align:center;font-size:13px;color:var(--muted);margin-bottom:16px}
+.bmi-scale{display:flex;gap:3px;border-radius:999px;overflow:hidden;height:6px;margin-bottom:6px}
+.bmi-scale-seg{flex:1}
+.bmi-scale-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted2)}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+.hero-stat{background:var(--surface2);border-radius:10px;padding:14px;text-align:center}
+.hero-stat-n{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent)}
+.hero-stat-l{font-size:11px;color:var(--muted);margin-top:2px}
 
-    /* BMI card in hero */
-    .bmi-widget {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px; padding: 36px;
-      position: relative; overflow: hidden;
-    }
-    .bmi-widget::after {
-      content: '';
-      position: absolute; bottom: -40px; right: -40px;
-      width: 200px; height: 200px;
-      background: radial-gradient(ellipse, rgba(0,229,160,.12), transparent 70%);
-    }
-    .bmi-widget-title {
-      font-family: 'Syne', sans-serif; font-size: 18px;
-      font-weight: 700; margin-bottom: 24px;
-    }
-    .bmi-gauge {
-      width: 160px; height: 80px; margin: 0 auto 24px;
-      position: relative; overflow: hidden;
-    }
-    .bmi-gauge svg { width: 100%; height: 100%; }
-    .bmi-result-num {
-      font-family: 'DM Mono', monospace; font-size: 48px;
-      font-weight: 500; text-align: center; color: var(--accent);
-      line-height: 1; margin-bottom: 8px;
-    }
-    .bmi-result-label { text-align: center; color: var(--muted); font-size: 14px; }
+/* FEATURES SECTION */
+.feat-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 60px}
+.sec-head{text-align:center;margin-bottom:48px}
+.sec-head h2{font-family:'Syne',sans-serif;font-size:clamp(28px,3.5vw,42px);font-weight:800;letter-spacing:-1.5px;margin-bottom:10px}
+.sec-head p{font-size:15.5px;color:var(--muted);max-width:520px;margin:0 auto;line-height:1.65}
+.feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;max-width:1100px;margin:0 auto}
+.feat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;cursor:pointer;transition:all .22s}
+.feat-card:hover{border-color:rgba(0,229,160,.4);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,229,160,.07)}
+.feat-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px}
+.feat-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:7px}
+.feat-desc{font-size:13px;color:var(--muted);line-height:1.6}
+.feat-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--accent);margin-top:12px;cursor:pointer;font-weight:600;transition:gap .18s}
+.feat-link:hover{gap:8px}
 
-    /* HOW IT WORKS */
-    .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 48px; }
-    .step-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 28px; position: relative; }
-    .step-num { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--accent); margin-bottom: 16px; letter-spacing: 1px; }
-    .step-icon { font-size: 32px; margin-bottom: 16px; }
-    .step-title { font-family: 'Syne', sans-serif; font-size: 19px; font-weight: 700; margin-bottom: 10px; }
-    .step-desc { font-size: 14px; color: var(--muted); line-height: 1.65; }
+/* STEPS */
+.steps-section{padding:80px 60px}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin:48px auto 0}
+.step{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;position:relative}
+.step::before{content:attr(data-step);position:absolute;top:20px;right:20px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted2);font-weight:500;letter-spacing:1px}
+.step-icon{font-size:28px;margin-bottom:14px}
+.step-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:8px}
+.step-desc{font-size:13.5px;color:var(--muted);line-height:1.65}
 
-    /* FEATURES */
-    .features-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; margin-top: 48px; }
-    .feature-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
-    .feature-card:hover { border-color: var(--accent); transform: translateY(-4px); transition: all .2s; }
-    .feature-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px; }
-    .feature-icon.green { background: rgba(0,229,160,.1); }
-    .feature-icon.blue { background: rgba(0,119,255,.1); }
-    .feature-icon.orange { background: rgba(255,107,53,.1); }
-    .feature-icon.yellow { background: rgba(255,200,50,.1); }
-    .feature-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 8px; }
-    .feature-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+/* TESTIMONIALS */
+.testi-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 60px}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin:48px auto 0}
+.testi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.testi-stars{color:var(--warn);font-size:13px;margin-bottom:12px;letter-spacing:2px}
+.testi-text{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:16px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.testi-name{font-size:13.5px;font-weight:600}
+.testi-role{font-size:11.5px;color:var(--muted)}
 
-    /* SECTION HEADING */
-    .section-heading { text-align: center; max-width: 560px; margin: 0 auto; }
-    .section-heading h2 { font-family: 'Syne', sans-serif; font-size: 40px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 12px; }
-    .section-heading p { font-size: 16px; color: var(--muted); line-height: 1.6; }
+/* CTA SECTION */
+.cta-section{padding:100px 60px;text-align:center}
+.cta-section h2{font-family:'Syne',sans-serif;font-size:clamp(32px,4vw,54px);font-weight:800;letter-spacing:-2px;margin-bottom:14px}
+.cta-section p{font-size:16px;color:var(--muted);margin-bottom:36px;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.65}
+.cta-badges{display:flex;justify-content:center;gap:16px;margin-top:32px;flex-wrap:wrap}
+.cta-badge{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+.cta-badge::before{content:'✓';color:var(--accent);font-weight:700}
 
-    /* ══════════════════════════════
-       LOGIN PAGE
-    ══════════════════════════════ */
-    #page-login {
-      min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
-    }
-    .login-left {
-      background: var(--surface);
-      display: flex; align-items: center; justify-content: center;
-      padding: 60px; flex-direction: column; text-align: left;
-    }
-    .login-right {
-      background: linear-gradient(135deg, #0b1a2e 0%, #061020 100%);
-      display: flex; align-items: center; justify-content: center;
-      padding: 60px; position: relative; overflow: hidden;
-    }
-    .login-right::before {
-      content: '';
-      position: absolute; top: -100px; left: -100px;
-      width: 500px; height: 500px;
-      background: radial-gradient(ellipse, rgba(0,229,160,.08), transparent 70%);
-    }
-    .login-brand { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--accent); margin-bottom: 48px; }
-    .login-brand span { color: var(--text); }
-    .login-form-title { font-family: 'Syne', sans-serif; font-size: 30px; font-weight: 800; margin-bottom: 8px; }
-    .login-form-sub { color: var(--muted); font-size: 15px; margin-bottom: 36px; }
-    .login-form { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 380px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .login-tabs { display: flex; background: var(--surface2); border-radius: var(--radius-sm); padding: 4px; gap: 4px; margin-bottom: 32px; }
-    .login-tab { flex: 1; padding: 10px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all .2s; border: none; background: none; color: var(--muted); font-family: 'DM Sans', sans-serif; }
-    .login-tab.active { background: var(--card); color: var(--text); }
-    .login-visual { position: relative; z-index: 1; width: 100%; max-width: 420px; }
-    .login-visual-card { background: rgba(21,30,48,.8); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 20px; padding: 28px; margin-bottom: 16px; }
-    .login-visual-stat { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .login-visual-label { font-size: 13px; color: var(--muted); }
-    .login-visual-value { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; color: var(--accent); }
-    .forgot-link { text-align: right; font-size: 13px; color: var(--accent); cursor: pointer; }
-    .divider { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; }
-    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .social-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; color: var(--text); font-family: 'DM Sans', sans-serif; transition: all .2s; }
-    .social-btn:hover { border-color: var(--text); }
+/* FOOTER */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:40px 60px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--accent)}
+.footer-logo span{color:var(--text)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;cursor:pointer;transition:color .18s}
+.footer-links a:hover{color:var(--text)}
+.footer-copy{font-size:12.5px;color:var(--muted2)}
 
-    /* ══════════════════════════════
-       DASHBOARD
-    ══════════════════════════════ */
-    #page-dashboard { padding-top: 64px; }
-    .dash-layout { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 64px); }
-    .sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 32px 20px; display: flex; flex-direction: column; gap: 4px; }
-    .sidebar-section { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); padding: 0 12px; margin: 16px 0 8px; }
-    .sidebar-section:first-child { margin-top: 0; }
-    .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; color: var(--muted); transition: all .2s; border: none; background: none; width: 100%; text-align: left; font-family: 'DM Sans', sans-serif; }
-    .sidebar-item:hover { background: var(--surface2); color: var(--text); }
-    .sidebar-item.active { background: rgba(0,229,160,.1); color: var(--accent); }
-    .sidebar-icon { width: 18px; text-align: center; }
-    .dash-main { padding: 40px 48px; overflow-y: auto; }
-    .dash-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
-    .dash-greeting { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 4px; }
-    .dash-date { color: var(--muted); font-size: 14px; }
-    .metrics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
-    .metric-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
-    .metric-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 8px; }
-    .metric-value { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 4px; }
-    .metric-change { font-size: 12px; }
-    .metric-change.up { color: var(--accent); }
-    .metric-change.down { color: var(--warn); }
-    .dash-grid { display: grid; grid-template-columns: 1fr 360px; gap: 24px; }
-    .dash-chart-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
-    .dash-chart-title { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
-    .chart-period { display: flex; gap: 4px; }
-    .period-btn { padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; background: var(--surface2); color: var(--muted); font-family: 'DM Sans', sans-serif; transition: all .2s; }
-    .period-btn.active { background: var(--accent); color: #000; }
-    .mini-chart { display: flex; align-items: flex-end; gap: 8px; height: 100px; }
-    .bar { flex: 1; background: var(--surface2); border-radius: 4px; position: relative; cursor: pointer; transition: background .2s; }
-    .bar:hover { background: var(--surface); }
-    .bar-fill { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(180deg, var(--accent2), var(--accent)); border-radius: 4px; transition: height .4s; }
-    .bar.highlight .bar-fill { background: linear-gradient(180deg, var(--accent), var(--accent)); }
-    .chart-labels { display: flex; gap: 8px; margin-top: 12px; }
-    .chart-label { flex: 1; text-align: center; font-size: 11px; color: var(--muted); }
-    .bmi-categories { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
-    .bmi-cat { display: flex; align-items: center; justify-content: space-between; }
-    .bmi-cat-name { font-size: 13px; color: var(--muted); }
-    .bmi-cat-range { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text); }
-    .bmi-cat-dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
-    .activity-list { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
-    .activity-item { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--surface2); border-radius: var(--radius-sm); }
-    .activity-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-    .activity-info { flex: 1; }
-    .activity-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
-    .activity-meta { font-size: 12px; color: var(--muted); }
-    .activity-cal { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--accent); }
+/* ════════════════════════
+   LOGIN PAGE
+════════════════════════ */
+#page-login{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+.login-left{display:flex;flex-direction:column;justify-content:center;padding:60px;background:var(--surface)}
+.login-right{background:linear-gradient(145deg,#0a1628 0%,#060e1e 100%);display:flex;align-items:center;justify-content:center;padding:60px;position:relative;overflow:hidden}
+.login-right::before{content:'';position:absolute;top:-80px;left:-80px;width:480px;height:480px;background:radial-gradient(ellipse,rgba(0,229,160,.07),transparent 70%)}
+.login-right::after{content:'';position:absolute;bottom:-60px;right:-60px;width:320px;height:320px;background:radial-gradient(ellipse,rgba(59,130,246,.06),transparent 70%)}
+.login-brand{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent);margin-bottom:44px;display:flex;align-items:center;gap:8px}
+.login-brand span{color:var(--text)}
+.login-brand-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#00b377);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.login-form-wrap{max-width:380px;width:100%}
+.login-tabs{display:flex;background:var(--surface2);border-radius:9px;padding:4px;gap:4px;margin-bottom:28px}
+.login-tab{flex:1;padding:9px;text-align:center;border-radius:6px;cursor:pointer;font-size:13.5px;font-weight:500;transition:all .18s;border:none;background:none;color:var(--muted);font-family:'DM Sans',sans-serif}
+.login-tab.active{background:var(--card);color:var(--text);box-shadow:0 1px 6px rgba(0,0,0,.25)}
+.form-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:6px}
+.form-sub{color:var(--muted);font-size:14px;margin-bottom:28px}
+.form-stack{display:flex;flex-direction:column;gap:16px}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.forgot{text-align:right;font-size:12.5px;color:var(--accent);cursor:pointer;transition:opacity .18s}
+.forgot:hover{opacity:.7}
+.divider{display:flex;align-items:center;gap:10px;color:var(--muted2);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.social-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:13.5px;color:var(--text);font-family:'DM Sans',sans-serif;transition:all .18s}
+.social-btn:hover{border-color:var(--border2);background:var(--surface3)}
+.password-wrap{position:relative}
+.password-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:4px}
+.password-toggle:hover{color:var(--text)}
+.terms-note{font-size:11.5px;color:var(--muted2);text-align:center;line-height:1.5}
+.terms-note a{color:var(--accent);cursor:pointer}
+/* login visual */
+.login-visual{position:relative;z-index:1;width:100%;max-width:400px}
+.lv-card{background:rgba(19,28,46,.85);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:14px}
+.lv-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:16px}
+.lv-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.lv-row:last-child{margin-bottom:0}
+.lv-label{font-size:12.5px;color:var(--muted)}
+.lv-val{font-family:'DM Mono',monospace;font-size:17px;font-weight:500}
+.lv-mini-bar{display:flex;align-items:flex-end;gap:5px;height:52px;margin-top:4px}
+.lv-mini-bar div{flex:1;border-radius:3px 3px 0 0;transition:height .4s}
 
-    /* ══════════════════════════════
-       DAILY GOALS PAGE
-    ══════════════════════════════ */
-    #page-goals { padding-top: 64px; }
-    .goals-layout { max-width: 1100px; margin: 0 auto; padding: 48px 48px; }
-    .goals-header { margin-bottom: 40px; }
-    .goals-header h1 { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
-    .goals-header p { color: var(--muted); font-size: 16px; }
-    .goals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
-    .goal-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
-    .goal-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
-    .goal-card-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-    .goal-card-sub { font-size: 13px; color: var(--muted); }
-    .goal-progress-wrap { margin-bottom: 16px; }
-    .goal-progress-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
-    .goal-current { font-family: 'DM Mono', monospace; font-weight: 500; }
-    .goal-target { color: var(--muted); }
-    .goals-form-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 20px; }
-    .ring-container { display: flex; justify-content: center; align-items: center; gap: 32px; padding: 20px 0; }
-    .ring-item { text-align: center; }
-    .ring-label { font-size: 12px; color: var(--muted); margin-top: 8px; }
-    .ring-val { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; margin-top: 2px; }
-    .goals-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 32px; }
+/* ════════════════════════
+   DASHBOARD
+════════════════════════ */
+#page-dashboard{padding-top:62px}
+.dash-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 62px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:24px 14px;display:flex;flex-direction:column;gap:2px;position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto}
+.sidebar-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted2);padding:0 10px;margin:14px 0 6px}
+.sidebar-label:first-child{margin-top:0}
+.sidebar-btn{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13.5px;color:var(--muted);transition:all .18s;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif}
+.sidebar-btn:hover{background:var(--surface2);color:var(--text)}
+.sidebar-btn.active{background:rgba(0,229,160,.1);color:var(--accent)}
+.sidebar-btn .s-icon{width:16px;text-align:center;font-size:15px}
+.sidebar-divider{height:1px;background:var(--border);margin:8px 0}
+.dash-main{padding:36px 44px;overflow-y:auto}
+.dash-topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+.dash-greeting{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:3px}
+.dash-sub{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px}
+.streak-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,.1);color:var(--warn);border:1px solid rgba(245,158,11,.2);border-radius:6px;padding:2px 8px;font-size:11.5px;font-weight:600}
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.metric-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:all .18s}
+.metric-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.metric-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.metric-value{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:6px;line-height:1}
+.metric-delta{font-size:12px;display:flex;align-items:center;gap:3px}
+.metric-delta.up{color:var(--accent)}
+.metric-delta.down{color:var(--danger)}
+.metric-delta.warn{color:var(--warn)}
+.dash-grid{display:grid;grid-template-columns:1fr 340px;gap:20px}
+.dash-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.dash-card-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
+.dash-card-title a{font-size:12px;color:var(--accent);text-decoration:none;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif}
+.period-btns{display:flex;gap:3px}
+.period-btn{padding:4px 10px;border-radius:5px;border:none;cursor:pointer;font-size:11.5px;font-weight:600;background:var(--surface2);color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .18s}
+.period-btn.active{background:var(--accent);color:#000}
+.mini-chart{display:flex;align-items:flex-end;gap:5px;height:90px;margin-bottom:8px}
+.bar{flex:1;background:var(--surface2);border-radius:3px;position:relative;cursor:pointer;transition:background .18s}
+.bar:hover{background:var(--surface3)}
+.bar-fill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(180deg,var(--accent2),var(--accent));border-radius:3px;transition:height .5s}
+.bar.hl .bar-fill{background:var(--accent)}
+.chart-labels{display:flex;gap:5px}
+.chart-label{flex:1;text-align:center;font-size:10px;color:var(--muted2)}
+.activity-list{display:flex;flex-direction:column;gap:10px}
+.activity-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border-radius:10px;cursor:pointer;transition:all .18s}
+.activity-item:hover{background:var(--surface3);transform:translateX(2px)}
+.act-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.act-info{flex:1}
+.act-name{font-size:13.5px;font-weight:500;margin-bottom:2px}
+.act-meta{font-size:11.5px;color:var(--muted)}
+.act-cal{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--accent)}
+.goal-row{margin-bottom:14px}
+.goal-row:last-child{margin-bottom:0}
+.goal-row-hd{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px}
+.goal-row-hd span:first-child{color:var(--muted)}
+.goal-row-hd span:last-child{font-family:'DM Mono',monospace;font-weight:500}
+.bmi-big{font-family:'DM Mono',monospace;font-size:48px;font-weight:500;color:var(--accent);line-height:1;text-align:center}
+.bmi-cats{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.bmi-cat-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.bmi-cat-dot{width:7px;height:7px;border-radius:50%;margin-right:7px}
 
-    /* ══════════════════════════════
-       DAILY ACTIVITY PAGE
-    ══════════════════════════════ */
-    #page-activity { padding-top: 64px; }
-    .activity-layout { max-width: 1100px; margin: 0 auto; padding: 48px; }
-    .activity-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
-    .activity-header h1 { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 4px; }
-    .activity-today-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 32px; }
-    .act-metric { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; text-align: center; }
-    .act-metric-icon { font-size: 28px; margin-bottom: 10px; }
-    .act-metric-num { font-family: 'DM Mono', monospace; font-size: 26px; font-weight: 500; color: var(--accent); }
-    .act-metric-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
-    .log-form { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 28px; }
-    .log-form-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 20px; }
-    .log-form-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
-    .workout-history { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
-    .history-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-    .history-table { width: 100%; border-collapse: collapse; }
-    .history-table th { text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); border-bottom: 1px solid var(--border); }
-    .history-table td { padding: 14px; font-size: 14px; border-bottom: 1px solid var(--border); }
-    .history-table tr:last-child td { border-bottom: none; }
-    .history-table tr:hover td { background: var(--surface2); }
+/* ════════════════════════
+   BMI CALCULATOR
+════════════════════════ */
+#page-bmi{padding-top:62px}
+.bmi-layout{max-width:860px;margin:0 auto;padding:48px 40px}
+.bmi-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:44px}
+.unit-toggle{display:flex;background:var(--surface2);border-radius:9px;padding:4px;gap:4px;width:fit-content;margin-bottom:28px}
+.unit-btn{padding:7px 18px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:600;background:none;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .18s}
+.unit-btn.active{background:var(--card);color:var(--text)}
+.bmi-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:28px}
+.bmi-result{display:none;margin-top:32px;background:var(--surface2);border-radius:16px;padding:32px}
+.bmi-result-big{font-family:'Syne',sans-serif;font-size:76px;font-weight:800;letter-spacing:-4px;line-height:1;margin-bottom:10px;text-align:center}
+.bmi-result-status{text-align:center;font-size:18px;font-weight:600;margin-bottom:20px}
+.bmi-result-scale{display:flex;gap:3px;border-radius:999px;overflow:hidden;height:8px;max-width:400px;margin:0 auto 6px}
+.bmi-result-scale-labels{display:flex;justify-content:space-between;max-width:400px;margin:0 auto 24px;font-size:10.5px;color:var(--muted2)}
+.bmi-info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.bmi-info-item{background:var(--card);border-radius:10px;padding:16px;text-align:center}
+.bmi-info-val{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;margin-bottom:4px}
+.bmi-info-lbl{font-size:11px;color:var(--muted)}
+.bmi-advice{background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.15);border-radius:12px;padding:20px}
+.bmi-advice-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.bmi-advice-text{font-size:13.5px;color:var(--muted);line-height:1.7}
 
-    /* ══════════════════════════════
-       BMI CALCULATOR PAGE
-    ══════════════════════════════ */
-    #page-bmi { padding-top: 64px; }
-    .bmi-layout { max-width: 900px; margin: 0 auto; padding: 48px; }
-    .bmi-calc-card { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 48px; }
-    .bmi-calc-title { font-family: 'Syne', sans-serif; font-size: 30px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
-    .bmi-calc-sub { color: var(--muted); font-size: 16px; margin-bottom: 40px; }
-    .unit-toggle { display: flex; background: var(--surface2); border-radius: var(--radius-sm); padding: 4px; gap: 4px; width: fit-content; margin-bottom: 32px; }
-    .unit-btn { padding: 8px 20px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; background: none; color: var(--muted); font-family: 'DM Sans', sans-serif; transition: all .2s; }
-    .unit-btn.active { background: var(--card); color: var(--text); }
-    .bmi-input-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 32px; }
-    .bmi-result-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px; text-align: center; margin-top: 32px; }
-    .bmi-big-num { font-family: 'Syne', sans-serif; font-size: 80px; font-weight: 800; letter-spacing: -4px; color: var(--accent); line-height: 1; margin-bottom: 12px; }
-    .bmi-status { font-size: 20px; font-weight: 600; margin-bottom: 24px; }
-    .bmi-scale { display: flex; gap: 4px; border-radius: var(--radius-sm); overflow: hidden; height: 8px; margin-bottom: 8px; }
-    .bmi-scale-seg { flex: 1; }
-    .bmi-info-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-top: 32px; }
-    .bmi-info-item { text-align: center; padding: 20px; background: var(--surface2); border-radius: var(--radius-sm); }
-    .bmi-info-range { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; margin-bottom: 4px; }
-    .bmi-info-name { font-size: 12px; color: var(--muted); }
+/* ════════════════════════
+   DAILY GOALS
+════════════════════════ */
+#page-goals{padding-top:62px}
+.goals-layout{max-width:1060px;margin:0 auto;padding:44px 40px}
+.page-header{margin-bottom:36px}
+.page-header h1{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1px;margin-bottom:6px}
+.page-header p{font-size:15px;color:var(--muted)}
+.rings-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:22px}
+.rings-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:20px}
+.rings-wrap{display:flex;justify-content:center;gap:28px;flex-wrap:wrap}
+.ring-item{text-align:center}
+.ring-lbl{font-size:11.5px;color:var(--muted);margin-top:8px}
+.ring-pct{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;margin-top:2px}
+.goals-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+.goal-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.goal-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.goal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:3px}
+.goal-sub{font-size:12px;color:var(--muted)}
+.goal-prog-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px}
+.goal-curr{font-family:'DM Mono',monospace;font-weight:500}
+.goal-targ{color:var(--muted)}
+.goal-inputs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.goal-tip{font-size:11.5px;color:var(--muted2);margin-top:6px;font-style:italic}
+.goals-footer{display:flex;justify-content:space-between;align-items:center}
+.goals-footer-note{font-size:12.5px;color:var(--muted2)}
 
-    /* ══════════════════════════════
-       FOOTER
-    ══════════════════════════════ */
-    footer {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 48px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 14px;
-    }
-    .footer-brand { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--accent); margin-bottom: 12px; }
-    .footer-brand span { color: var(--text); }
+/* ════════════════════════
+   ACTIVITY
+════════════════════════ */
+#page-activity{padding-top:62px}
+.activity-layout{max-width:1060px;margin:0 auto;padding:44px 40px}
+.act-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px}
+.act-today-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.act-today-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all .18s}
+.act-today-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.act-today-icon{font-size:26px;margin-bottom:9px}
+.act-today-num{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;color:var(--accent)}
+.act-today-lbl{font-size:11.5px;color:var(--muted);margin-top:3px}
+.act-today-delta{font-size:11px;color:var(--accent);margin-top:3px}
+.log-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:20px}
+.log-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px}
+.log-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:10px;align-items:end}
+.history-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.history-hd{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.hist-table{width:100%;border-collapse:collapse}
+.hist-table th{text-align:left;padding:9px 12px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted2);border-bottom:1px solid var(--border)}
+.hist-table td{padding:12px 12px;font-size:13.5px;border-bottom:1px solid var(--border);vertical-align:middle}
+.hist-table tr:last-child td{border-bottom:none}
+.hist-table tbody tr{cursor:pointer;transition:background .15s}
+.hist-table tbody tr:hover td{background:var(--surface2)}
+.del-btn{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:15px;padding:4px 6px;border-radius:5px;transition:all .18s}
+.del-btn:hover{color:var(--danger);background:rgba(239,68,68,.1)}
 
-    /* ══════════════════════════════
-       TOAST NOTIFICATION
-    ══════════════════════════════ */
-    .toast {
-      position: fixed; bottom: 32px; right: 32px; z-index: 999;
-      background: var(--accent); color: #000;
-      padding: 14px 24px; border-radius: var(--radius-sm);
-      font-weight: 600; font-size: 14px;
-      transform: translateY(20px); opacity: 0;
-      transition: all .3s; pointer-events: none;
-    }
-    .toast.show { transform: translateY(0); opacity: 1; }
+/* ════════════════════════
+   PROFILE PAGE
+════════════════════════ */
+#page-profile{padding-top:62px}
+.profile-layout{max-width:840px;margin:0 auto;padding:44px 40px}
+.profile-hero{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px;display:flex;align-items:center;gap:24px}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;flex-shrink:0;position:relative}
+.profile-avatar-edit{position:absolute;bottom:0;right:0;width:22px;height:22px;background:var(--accent);border-radius:50%;border:2px solid var(--card);display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer}
+.profile-info h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:4px}
+.profile-info p{font-size:13.5px;color:var(--muted)}
+.profile-badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 
-    /* RESPONSIVE */
-    @media (max-width: 900px) {
-      nav { padding: 0 24px; }
-      .hero { grid-template-columns: 1fr; gap: 40px; padding: 40px 24px; }
-      .steps-grid { grid-template-columns: 1fr; }
-      .features-grid { grid-template-columns: 1fr 1fr; }
-      .metrics-grid { grid-template-columns: 1fr 1fr; }
-      .dash-grid { grid-template-columns: 1fr; }
-      .dash-layout { grid-template-columns: 1fr; }
-      .sidebar { display: none; }
-      #page-login { grid-template-columns: 1fr; }
-      .login-right { display: none; }
-      .goals-grid { grid-template-columns: 1fr; }
-      .bmi-input-grid { grid-template-columns: 1fr 1fr; }
-      .bmi-info-grid { grid-template-columns: 1fr 1fr; }
-      .activity-today-grid { grid-template-columns: 1fr 1fr; }
-      .log-form-grid { grid-template-columns: 1fr 1fr; }
-      .section { padding: 60px 24px; }
-    }
-  </style>
+/* ════════════════════════
+   NOTIFICATION PANEL
+════════════════════════ */
+.notif-panel{position:fixed;top:70px;right:20px;width:320px;background:var(--surface);border:1px solid var(--border2);border-radius:14px;z-index:300;display:none;box-shadow:var(--shadow)}
+.notif-panel.open{display:block}
+.notif-hd{display:flex;justify-content:space-between;align-items:center;padding:16px 16px 12px;border-bottom:1px solid var(--border)}
+.notif-hd-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700}
+.notif-mark{font-size:12px;color:var(--accent);cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif}
+.notif-item{display:flex;gap:10px;padding:13px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.notif-item:hover{background:var(--surface2)}
+.notif-item:last-child{border-bottom:none}
+.notif-item.unread{background:rgba(0,229,160,.03)}
+.notif-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);margin-top:5px;flex-shrink:0}
+.notif-dot.read{background:transparent}
+.notif-content p{font-size:13px;line-height:1.5;margin-bottom:3px}
+.notif-content time{font-size:11px;color:var(--muted2)}
+
+/* responsive */
+@media(max-width:900px){
+  nav{padding:0 20px}
+  .hero{grid-template-columns:1fr;gap:40px;padding:40px 24px}
+  .feat-grid{grid-template-columns:1fr 1fr}
+  .steps-grid,.testi-grid{grid-template-columns:1fr}
+  .dash-layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .metric-grid{grid-template-columns:1fr 1fr}
+  .dash-grid{grid-template-columns:1fr}
+  #page-login{grid-template-columns:1fr}
+  .login-right{display:none}
+  .bmi-inputs{grid-template-columns:1fr 1fr}
+  .bmi-info-grid{grid-template-columns:1fr 1fr}
+  .goals-grid{grid-template-columns:1fr}
+  .log-grid{grid-template-columns:1fr 1fr}
+  .act-today-grid{grid-template-columns:1fr 1fr}
+  .profile-grid{grid-template-columns:1fr}
+  .feat-section,.steps-section,.testi-section,.cta-section{padding:60px 24px}
+  footer{flex-direction:column;text-align:center;padding:32px 24px}
+}
+</style>
 </head>
 <body>
 
-<!-- ── TOAST ── -->
-<div class="toast" id="toast">✓ Saved successfully</div>
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-hd">
+    <span class="notif-hd-title">Notifications</span>
+    <button class="notif-mark" onclick="markAllRead()">Mark all read</button>
+  </div>
+  <div class="notif-item unread" onclick="showPage('goals')">
+    <div class="notif-dot"></div>
+    <div class="notif-content"><p>💧 You're 0.9L short of today's water goal — keep it up!</p><time>5 minutes ago</time></div>
+  </div>
+  <div class="notif-item unread" onclick="showPage('activity')">
+    <div class="notif-dot"></div>
+    <div class="notif-content"><p>🏃 Great job on your morning run! 340 kcal burned.</p><time>2 hours ago</time></div>
+  </div>
+  <div class="notif-item unread" onclick="showPage('bmi')">
+    <div class="notif-dot"></div>
+    <div class="notif-content"><p>⚖️ Weekly weigh-in reminder — update your BMI reading.</p><time>This morning</time></div>
+  </div>
+  <div class="notif-item" onclick="showPage('dashboard')">
+    <div class="notif-dot read"></div>
+    <div class="notif-content"><p>🎯 You hit your step goal 5 days in a row! 🔥</p><time>Yesterday</time></div>
+  </div>
+  <div class="notif-item" onclick="showPage('dashboard')">
+    <div class="notif-dot read"></div>
+    <div class="notif-content"><p>📊 Your weekly summary is ready to view.</p><time>2 days ago</time></div>
+  </div>
+</div>
 
-<!-- ══════════════════════════════════════════════
-     NAVIGATION
-══════════════════════════════════════════════ -->
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profile-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeProfileModal()">✕</button>
+    <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:20px">Quick Profile</div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+      <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700">AJ</div>
+      <div>
+        <div style="font-weight:700;font-size:16px">Alex Johnson</div>
+        <div style="font-size:13px;color:var(--muted)">alex@example.com</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+      <div style="background:var(--surface2);border-radius:9px;padding:12px;text-align:center">
+        <div style="font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--accent)">23.4</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Current BMI</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:9px;padding:12px;text-align:center">
+        <div style="font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--warn)">12</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Day streak 🔥</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="showPage('profile');closeProfileModal()">View profile</button>
+      <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="showPage('home');closeProfileModal()">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════
+     NAV
+═══════════════════════ -->
 <nav>
-  <div class="nav-logo" onclick="showPage('home')">Vital<span>Fit</span></div>
-  <div class="nav-links" id="nav-links">
-    <button onclick="showPage('home')" class="active" id="nav-home">Home</button>
-    <button onclick="showPage('bmi')" id="nav-bmi">BMI Check</button>
-    <button onclick="showPage('dashboard')" id="nav-dashboard">Dashboard</button>
-    <button onclick="showPage('goals')" id="nav-goals">Daily Goals</button>
-    <button onclick="showPage('activity')" id="nav-activity">Activity</button>
-    <button onclick="showPage('login')" class="nav-cta">Get Started</button>
+  <div class="nav-logo" onclick="showPage('home')">
+    <div class="nav-logo-icon">💚</div>
+    Vital<span>Fit</span>
+  </div>
+  <div class="nav-center">
+    <button class="nav-link active" id="nav-home" onclick="showPage('home')">Home</button>
+    <button class="nav-link" id="nav-bmi" onclick="showPage('bmi')">BMI Check</button>
+    <button class="nav-link" id="nav-dashboard" onclick="showPage('dashboard')">Dashboard</button>
+    <button class="nav-link" id="nav-goals" onclick="showPage('goals')">Goals</button>
+    <button class="nav-link" id="nav-activity" onclick="showPage('activity')">Activity</button>
+  </div>
+  <div class="nav-right">
+    <button class="nav-notif" id="nav-notif" onclick="toggleNotif()" title="Notifications"></button>
+    <div class="nav-avatar" id="nav-avatar" onclick="openProfileModal()">AJ</div>
+    <button class="btn-nav-cta" onclick="showPage('login')">Get started</button>
   </div>
 </nav>
 
-
-<!-- ══════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════
      HOME PAGE
-══════════════════════════════════════════════ -->
+═══════════════════════════════════════════ -->
 <div class="page active" id="page-home">
+  <!-- HERO -->
   <div class="hero">
-    <!-- Left -->
     <div>
-      <div class="hero-eyebrow">Science-backed fitness tracking</div>
+      <div class="section-eyebrow">Science-backed fitness tracking</div>
       <h1 class="hero-title">
         Know your body.<br>
-        <span class="accent">Own your</span><br>
+        <em>Own your</em><br>
         health.
       </h1>
-      <p class="hero-subtitle">
-        VitalFit combines BMI analysis, real-time activity logging, and smart daily goals to give you a complete picture of your fitness — every single day.
-      </p>
+      <p class="hero-sub">VitalFit combines BMI analysis, real-time activity logging, and smart daily goals to give you a complete, personalized picture of your fitness — every single day.</p>
       <div class="hero-actions">
-        <button class="btn btn-primary" onclick="showPage('login')">Start for free →</button>
-        <button class="btn btn-outline" onclick="showPage('bmi')">Try BMI Check</button>
+        <button class="btn btn-primary btn-lg" onclick="showPage('login')">Start for free →</button>
+        <button class="btn btn-secondary btn-lg" onclick="showPage('bmi')">Try BMI Check</button>
+      </div>
+      <div class="hero-trust">
+        <div class="hero-trust-avatars">
+          <div style="background:linear-gradient(135deg,#f59e0b,#ef4444)">S</div>
+          <div style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">M</div>
+          <div style="background:linear-gradient(135deg,#00e5a0,#0077ff)">K</div>
+          <div style="background:linear-gradient(135deg,#ec4899,#a78bfa)">L</div>
+        </div>
+        <div class="hero-trust-text">Trusted by <strong>50,000+</strong> users worldwide</div>
       </div>
       <div class="hero-stats">
-        <div>
-          <div class="hero-stat-num">50k+</div>
-          <div class="hero-stat-label">Active users</div>
+        <div class="hero-stat">
+          <div class="hero-stat-n">50k+</div>
+          <div class="hero-stat-l">Active users</div>
         </div>
-        <div>
-          <div class="hero-stat-num">4.9★</div>
-          <div class="hero-stat-label">User rating</div>
+        <div class="hero-stat">
+          <div class="hero-stat-n">4.9★</div>
+          <div class="hero-stat-l">User rating</div>
         </div>
-        <div>
-          <div class="hero-stat-num">12M+</div>
-          <div class="hero-stat-label">Workouts logged</div>
+        <div class="hero-stat">
+          <div class="hero-stat-n">12M+</div>
+          <div class="hero-stat-l">Workouts logged</div>
         </div>
       </div>
     </div>
-    <!-- Right: BMI Quick Widget -->
-    <div class="bmi-widget">
-      <div class="bmi-widget-title">Quick BMI Check</div>
-      <div style="display:grid;gap:14px;margin-bottom:24px;">
+    <!-- BMI WIDGET -->
+    <div class="hero-widget">
+      <div class="hero-widget-title">⚖️ Quick BMI Check</div>
+      <div style="display:grid;gap:12px;margin-bottom:18px">
         <div class="form-group">
-          <label class="form-label">Weight (kg)</label>
-          <input class="form-input" type="number" id="hw-weight" placeholder="70" oninput="calcHeroBMI()"/>
+          <label class="label">Weight (kg)</label>
+          <input class="input" type="number" id="hw-weight" placeholder="70" oninput="calcHeroBMI()"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Height (cm)</label>
-          <input class="form-input" type="number" id="hw-height" placeholder="175" oninput="calcHeroBMI()"/>
+          <label class="label">Height (cm)</label>
+          <input class="input" type="number" id="hw-height" placeholder="175" oninput="calcHeroBMI()"/>
         </div>
       </div>
-      <div style="background:var(--surface2);border-radius:12px;padding:20px;text-align:center;margin-bottom:16px;">
-        <div class="bmi-result-num" id="hero-bmi-num">—</div>
-        <div class="bmi-result-label" id="hero-bmi-label">Enter your details above</div>
+      <div style="background:var(--surface2);border-radius:12px;padding:18px;margin-bottom:14px">
+        <div class="bmi-num" id="hero-bmi-num" style="color:var(--accent)">—</div>
+        <div class="bmi-cat" id="hero-bmi-cat">Enter your details above</div>
+        <div id="hero-bmi-extra" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.6"></div>
       </div>
-      <div class="bmi-scale" style="height:6px;border-radius:999px;">
-        <div class="bmi-scale-seg" style="background:#4da6ff;border-radius:4px 0 0 4px;"></div>
-        <div class="bmi-scale-seg" style="background:var(--accent);"></div>
-        <div class="bmi-scale-seg" style="background:#ffc832;"></div>
-        <div class="bmi-scale-seg" style="background:var(--warn);border-radius:0 4px 4px 0;"></div>
+      <div class="bmi-scale" style="margin-bottom:5px">
+        <div class="bmi-scale-seg" style="background:#60a5fa;border-radius:4px 0 0 4px"></div>
+        <div class="bmi-scale-seg" style="background:var(--accent)"></div>
+        <div class="bmi-scale-seg" style="background:var(--warn)"></div>
+        <div class="bmi-scale-seg" style="background:var(--danger);border-radius:0 4px 4px 0"></div>
       </div>
-      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--muted);">
+      <div class="bmi-scale-labels">
         <span>Underweight</span><span>Normal</span><span>Overweight</span><span>Obese</span>
       </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:20px;" onclick="showPage('bmi')">Full Analysis →</button>
-    </div>
-  </div>
-
-  <!-- HOW IT WORKS -->
-  <div class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
-    <div class="container">
-      <div class="section-heading">
-        <h2>Three steps to a healthier you</h2>
-        <p>No complicated setup. Start tracking in under two minutes.</p>
-      </div>
-      <div class="steps-grid">
-        <div class="step-card">
-          <div class="step-num">STEP 01</div>
-          <div class="step-icon">📋</div>
-          <div class="step-title">Set your profile</div>
-          <div class="step-desc">Enter your age, weight, height, and health goals. We use this to calibrate your BMI, daily calorie needs, and fitness benchmarks.</div>
-        </div>
-        <div class="step-card">
-          <div class="step-num">STEP 02</div>
-          <div class="step-icon">🎯</div>
-          <div class="step-title">Define daily goals</div>
-          <div class="step-desc">Set targets for steps, calories burned, water intake, and workout duration. Your dashboard tracks progress in real time throughout the day.</div>
-        </div>
-        <div class="step-card">
-          <div class="step-num">STEP 03</div>
-          <div class="step-icon">📈</div>
-          <div class="step-title">Log and improve</div>
-          <div class="step-desc">Record workouts, meals, and body measurements. VitalFit surfaces weekly trends so you always know what's working and what to adjust.</div>
-        </div>
-      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px" onclick="showPage('bmi')">Full BMI analysis →</button>
     </div>
   </div>
 
   <!-- FEATURES -->
-  <div class="section">
-    <div class="container">
-      <div class="section-heading">
-        <h2>Everything in one place</h2>
-        <p>From BMI monitoring to workout planning — all the tools you need, beautifully unified.</p>
+  <div class="feat-section">
+    <div class="sec-head">
+      <h2>Everything in one place</h2>
+      <p>From BMI monitoring to workout planning — all the tools you need, beautifully unified and designed to keep you motivated.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card" onclick="showPage('bmi')">
+        <div class="feat-icon" style="background:rgba(0,229,160,.1)">⚖️</div>
+        <div class="feat-name">BMI Calculator</div>
+        <div class="feat-desc">Accurate body mass index with health category, ideal weight range, BMR, TDEE, and risk assessment.</div>
+        <div class="feat-link">Open calculator →</div>
       </div>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon green">⚖️</div>
-          <div class="feature-name">BMI Calculator</div>
-          <div class="feature-desc">Accurate body mass index with health category, ideal weight range, and risk assessment.</div>
+      <div class="feat-card" onclick="showPage('goals')">
+        <div class="feat-icon" style="background:rgba(59,130,246,.1)">🎯</div>
+        <div class="feat-name">Daily Goals</div>
+        <div class="feat-desc">Custom step counts, calorie targets, hydration reminders, and sleep tracking — all in one place.</div>
+        <div class="feat-link">Set your goals →</div>
+      </div>
+      <div class="feat-card" onclick="showPage('activity')">
+        <div class="feat-icon" style="background:rgba(245,158,11,.1)">🏃</div>
+        <div class="feat-name">Activity Log</div>
+        <div class="feat-desc">Log any workout — running, cycling, weightlifting, yoga — with auto-calculated calories burned.</div>
+        <div class="feat-link">Log a workout →</div>
+      </div>
+      <div class="feat-card" onclick="showPage('dashboard')">
+        <div class="feat-icon" style="background:rgba(167,139,250,.1)">📊</div>
+        <div class="feat-name">Progress Dashboard</div>
+        <div class="feat-desc">Visual charts of weight trend, BMI history, activity streaks, and weekly summaries with insights.</div>
+        <div class="feat-link">View dashboard →</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="steps-section">
+    <div class="sec-head">
+      <h2>Three steps to a healthier you</h2>
+      <p>No complicated setup. Start tracking in under two minutes and see results within weeks.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step" data-step="01">
+        <div class="step-icon">📋</div>
+        <div class="step-title">Set your profile</div>
+        <div class="step-desc">Enter your age, weight, height, and health goals. VitalFit uses this to calibrate your BMI, daily calorie needs, and fitness benchmarks tailored to you.</div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="showPage('login')">Create account →</button>
+      </div>
+      <div class="step" data-step="02">
+        <div class="step-icon">🎯</div>
+        <div class="step-title">Define daily goals</div>
+        <div class="step-desc">Set targets for steps, calories burned, water intake, workout duration, and sleep. Your dashboard tracks progress in real time throughout the day.</div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="showPage('goals')">Explore goals →</button>
+      </div>
+      <div class="step" data-step="03">
+        <div class="step-icon">📈</div>
+        <div class="step-title">Log and improve</div>
+        <div class="step-desc">Record workouts and body measurements daily. VitalFit surfaces weekly trends so you always know what's working and what to adjust for faster results.</div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="showPage('activity')">Log an activity →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="testi-section">
+    <div class="sec-head">
+      <h2>What our users say</h2>
+      <p>Real results from real people — no paid endorsements, just honest feedback from the VitalFit community.</p>
+    </div>
+    <div class="testi-grid">
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Lost 8 kg in 3 months by just tracking my daily steps and calories. The BMI calculator made me realize I needed to change — this app gave me the roadmap."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">SL</div>
+          <div><div class="testi-name">Sarah L.</div><div class="testi-role">Lost 8 kg in 90 days</div></div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon blue">🎯</div>
-          <div class="feature-name">Daily Goals</div>
-          <div class="feature-desc">Custom step counts, calorie targets, hydration reminders, and active minute tracking.</div>
+      </div>
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"The activity logging is incredibly smooth. I love how it calculates calories automatically based on workout type and intensity. Saves me so much time."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">MK</div>
+          <div><div class="testi-name">Marcus K.</div><div class="testi-role">Marathon runner</div></div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon orange">🏃</div>
-          <div class="feature-name">Activity Log</div>
-          <div class="feature-desc">Log any workout — running, cycling, weightlifting, yoga — with duration and calories burned.</div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon yellow">📊</div>
-          <div class="feature-name">Progress Dashboard</div>
-          <div class="feature-desc">Visual charts of your weight trend, BMI history, activity streaks, and weekly summaries.</div>
+      </div>
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Finally, a fitness app that doesn't bombard you with ads or premium paywalls every 5 seconds. Clean, fast, and everything I actually need to stay on track."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#00e5a0,#0077ff)">KP</div>
+          <div><div class="testi-name">Kavya P.</div><div class="testi-role">Yoga instructor</div></div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- CTA -->
-  <div class="section" style="background:var(--surface);border-top:1px solid var(--border);">
-    <div class="container" style="text-align:center;">
-      <div style="font-family:'Syne',sans-serif;font-size:clamp(32px,4vw,52px);font-weight:800;letter-spacing:-2px;margin-bottom:16px;">
-        Ready to <span style="color:var(--accent)">transform</span> your health?
-      </div>
-      <p style="color:var(--muted);font-size:17px;margin-bottom:36px;max-width:480px;margin-left:auto;margin-right:auto;">
-        Join thousands who've made lasting progress with data-driven fitness tracking.
-      </p>
-      <button class="btn btn-primary" style="font-size:17px;padding:16px 36px;" onclick="showPage('login')">Create free account →</button>
+  <div class="cta-section">
+    <h2>Ready to <em style="color:var(--accent);font-style:normal">transform</em> your health?</h2>
+    <p>Join thousands who've made lasting progress with data-driven, science-backed fitness tracking.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary btn-lg" onclick="showPage('login')">Create free account →</button>
+      <button class="btn btn-secondary btn-lg" onclick="showPage('dashboard')">Explore dashboard</button>
+    </div>
+    <div class="cta-badges">
+      <span class="cta-badge">No credit card required</span>
+      <span class="cta-badge">Free forever plan</span>
+      <span class="cta-badge">Cancel anytime</span>
+      <span class="cta-badge">Privacy-first, no ads</span>
     </div>
   </div>
 
   <footer>
-    <div class="footer-brand">Vital<span>Fit</span></div>
-    <p>© 2025 VitalFit. All rights reserved. · Made for healthier lives.</p>
+    <div class="footer-logo">Vital<span>Fit</span></div>
+    <div class="footer-links">
+      <a onclick="showPage('home')">Home</a>
+      <a onclick="showPage('bmi')">BMI Check</a>
+      <a onclick="showPage('dashboard')">Dashboard</a>
+      <a onclick="showPage('goals')">Goals</a>
+      <a onclick="showPage('activity')">Activity</a>
+      <a onclick="showPage('login')">Sign in</a>
+    </div>
+    <div class="footer-copy">© 2025 VitalFit. Made for healthier lives.</div>
   </footer>
 </div>
 
-
-<!-- ══════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════
      LOGIN PAGE
-══════════════════════════════════════════════ -->
+═══════════════════════════════════════════ -->
 <div class="page" id="page-login">
   <div class="login-left">
-    <div class="login-brand">Vital<span>Fit</span></div>
-    <div style="max-width:380px;width:100%;">
+    <div class="login-brand">
+      <div class="login-brand-icon">💚</div>
+      Vital<span>Fit</span>
+    </div>
+    <div class="login-form-wrap">
       <div class="login-tabs">
-        <button class="login-tab active" onclick="switchTab('login-tab','signin',this)">Sign In</button>
-        <button class="login-tab" onclick="switchTab('login-tab','signup',this)">Create Account</button>
+        <button class="login-tab active" onclick="switchLoginTab('signin',this)">Sign in</button>
+        <button class="login-tab" onclick="switchLoginTab('signup',this)">Create account</button>
       </div>
 
       <!-- SIGN IN -->
       <div id="signin-form">
-        <div class="login-form-title">Welcome back</div>
-        <div class="login-form-sub">Log in to view your fitness dashboard.</div>
-        <div class="login-form">
+        <div class="form-title">Welcome back</div>
+        <div class="form-sub">Log in to view your fitness dashboard.</div>
+        <div class="form-stack">
           <div class="form-group">
-            <label class="form-label">Email</label>
-            <input class="form-input" type="email" placeholder="you@example.com"/>
+            <label class="label">Email</label>
+            <input class="input" type="email" placeholder="you@example.com"/>
           </div>
           <div class="form-group">
-            <label class="form-label">Password</label>
-            <input class="form-input" type="password" placeholder="••••••••"/>
+            <label class="label">Password</label>
+            <div class="password-wrap">
+              <input class="input" type="password" id="signin-pw" placeholder="••••••••"/>
+              <button class="password-toggle" onclick="togglePw('signin-pw',this)">👁</button>
+            </div>
           </div>
-          <div class="forgot-link">Forgot password?</div>
-          <button class="btn btn-primary" style="justify-content:center;" onclick="showPage('dashboard')">Sign in →</button>
-          <div class="divider">or</div>
-          <button class="social-btn">🔵 Continue with Google</button>
-          <button class="social-btn">⬛ Continue with Apple</button>
+          <div class="forgot" onclick="showToast('📧 Password reset link sent to your email','info')">Forgot password?</div>
+          <button class="btn btn-primary" style="justify-content:center" onclick="loginSuccess()">Sign in →</button>
+          <div class="divider">or continue with</div>
+          <button class="social-btn" onclick="loginSuccess()">🔵 Continue with Google</button>
+          <button class="social-btn" onclick="loginSuccess()">⬛ Continue with Apple</button>
+          <div class="terms-note">By signing in you agree to our <a>Terms of Service</a> and <a>Privacy Policy</a>.</div>
         </div>
       </div>
 
       <!-- SIGN UP -->
-      <div id="signup-form" style="display:none;">
-        <div class="login-form-title">Create your account</div>
-        <div class="login-form-sub">Start tracking your health for free today.</div>
-        <div class="login-form">
-          <div class="form-row">
+      <div id="signup-form" style="display:none">
+        <div class="form-title">Create your account</div>
+        <div class="form-sub">Start tracking your health for free today.</div>
+        <div class="form-stack">
+          <div class="form-row-2">
             <div class="form-group">
-              <label class="form-label">First name</label>
-              <input class="form-input" type="text" placeholder="Alex"/>
+              <label class="label">First name</label>
+              <input class="input" type="text" placeholder="Alex"/>
             </div>
             <div class="form-group">
-              <label class="form-label">Last name</label>
-              <input class="form-input" type="text" placeholder="Johnson"/>
+              <label class="label">Last name</label>
+              <input class="input" type="text" placeholder="Johnson"/>
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Email</label>
-            <input class="form-input" type="email" placeholder="you@example.com"/>
+            <label class="label">Email</label>
+            <input class="input" type="email" placeholder="you@example.com"/>
           </div>
           <div class="form-group">
-            <label class="form-label">Password</label>
-            <input class="form-input" type="password" placeholder="Min. 8 characters"/>
+            <label class="label">Password</label>
+            <div class="password-wrap">
+              <input class="input" type="password" id="signup-pw" placeholder="Min. 8 characters"/>
+              <button class="password-toggle" onclick="togglePw('signup-pw',this)">👁</button>
+            </div>
           </div>
-          <div class="form-row">
+          <div class="form-row-2">
             <div class="form-group">
-              <label class="form-label">Age</label>
-              <input class="form-input" type="number" placeholder="28"/>
+              <label class="label">Age</label>
+              <input class="input" type="number" placeholder="28" min="13" max="120"/>
             </div>
             <div class="form-group">
-              <label class="form-label">Sex</label>
-              <select class="form-input">
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
+              <label class="label">Sex</label>
+              <select class="input">
+                <option>Male</option><option>Female</option><option>Other</option>
               </select>
             </div>
           </div>
-          <button class="btn btn-primary" style="justify-content:center;" onclick="showPage('dashboard')">Create account →</button>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="label">Weight (kg)</label>
+              <input class="input" type="number" placeholder="70"/>
+            </div>
+            <div class="form-group">
+              <label class="label">Height (cm)</label>
+              <input class="input" type="number" placeholder="175"/>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="justify-content:center" onclick="loginSuccess()">Create account →</button>
           <div class="divider">or</div>
-          <button class="social-btn">🔵 Continue with Google</button>
+          <button class="social-btn" onclick="loginSuccess()">🔵 Continue with Google</button>
+          <div class="terms-note">By creating an account you agree to our <a>Terms</a> and <a>Privacy Policy</a>.</div>
         </div>
       </div>
     </div>
   </div>
   <div class="login-right">
     <div class="login-visual">
-      <div class="login-visual-card">
-        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:20px;color:var(--text);">Today's snapshot</div>
-        <div class="login-visual-stat">
-          <div class="login-visual-label">BMI</div>
-          <div class="login-visual-value" style="color:var(--accent)">23.4</div>
+      <div class="lv-card">
+        <div class="lv-title">Today's snapshot</div>
+        <div class="lv-row">
+          <span class="lv-label">BMI</span>
+          <span class="lv-val" style="color:var(--accent)">23.4</span>
         </div>
-        <div class="login-visual-stat">
-          <div class="login-visual-label">Steps today</div>
-          <div class="login-visual-value">7,241</div>
+        <div class="lv-row">
+          <span class="lv-label">Steps today</span>
+          <span class="lv-val">7,241</span>
         </div>
-        <div class="login-visual-stat" style="margin-bottom:0">
-          <div class="login-visual-label">Calories burned</div>
-          <div class="login-visual-value" style="color:#ffc832">1,840</div>
+        <div class="lv-row">
+          <span class="lv-label">Calories burned</span>
+          <span class="lv-val" style="color:var(--warn)">1,840</span>
         </div>
-        <div class="progress-bar" style="margin-top:20px;">
-          <div class="progress-fill" style="width:72%;"></div>
+        <div class="lv-row" style="margin-bottom:0">
+          <span class="lv-label">Water intake</span>
+          <span class="lv-val" style="color:#60a5fa">1.6 L</span>
         </div>
-        <div style="font-size:12px;color:var(--muted);margin-top:8px;">72% of daily goal reached</div>
+        <div class="progress" style="margin-top:16px"><div class="progress-bar prog-h6" style="width:72%;background:linear-gradient(90deg,var(--accent2),var(--accent))"></div></div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:7px">72% of daily goal complete</div>
       </div>
-      <div class="login-visual-card">
-        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px;">This week's workouts</div>
-        <div style="display:flex;align-items:flex-end;gap:8px;height:60px;">
-          <div style="flex:1;background:var(--accent);opacity:.4;border-radius:4px;height:40%;"></div>
-          <div style="flex:1;background:var(--accent);opacity:.6;border-radius:4px;height:65%;"></div>
-          <div style="flex:1;background:var(--accent);opacity:.3;border-radius:4px;height:25%;"></div>
-          <div style="flex:1;background:var(--accent);opacity:.8;border-radius:4px;height:90%;"></div>
-          <div style="flex:1;background:var(--accent);border-radius:4px;height:75%;"></div>
-          <div style="flex:1;background:var(--surface2);border-radius:4px;height:20%;"></div>
-          <div style="flex:1;background:var(--surface2);border-radius:4px;height:10%;"></div>
+      <div class="lv-card">
+        <div class="lv-title">This week's workouts</div>
+        <div class="lv-mini-bar">
+          <div style="background:var(--accent);opacity:.35;height:40%;border-radius:3px 3px 0 0"></div>
+          <div style="background:var(--accent);opacity:.6;height:65%;border-radius:3px 3px 0 0"></div>
+          <div style="background:var(--accent);opacity:.3;height:25%;border-radius:3px 3px 0 0"></div>
+          <div style="background:var(--accent);opacity:.8;height:90%;border-radius:3px 3px 0 0"></div>
+          <div style="background:var(--accent);height:75%;border-radius:3px 3px 0 0"></div>
+          <div style="background:var(--surface2);height:15%;border-radius:3px 3px 0 0"></div>
+          <div style="background:var(--surface2);height:10%;border-radius:3px 3px 0 0"></div>
         </div>
-        <div style="display:flex;gap:8px;margin-top:8px;">
-          <div style="flex:1;text-align:center;font-size:10px;color:var(--muted);">M</div>
-          <div style="flex:1;text-align:center;font-size:10px;color:var(--muted);">T</div>
-          <div style="flex:1;text-align:center;font-size:10px;color:var(--muted);">W</div>
-          <div style="flex:1;text-align:center;font-size:10px;color:var(--muted);">T</div>
-          <div style="flex:1;text-align:center;font-size:10px;color:var(--accent);">F</div>
-          <div style="flex:1;text-align:center;font-size:10px;color:var(--muted);">S</div>
-          <div style="flex:1;text-align:center;font-size:10px;color:var(--muted);">S</div>
+        <div style="display:flex;gap:5px;margin-top:7px">
+          <div style="flex:1;text-align:center;font-size:10px;color:var(--muted2)">M</div>
+          <div style="flex:1;text-align:center;font-size:10px;color:var(--muted2)">T</div>
+          <div style="flex:1;text-align:center;font-size:10px;color:var(--muted2)">W</div>
+          <div style="flex:1;text-align:center;font-size:10px;color:var(--muted2)">T</div>
+          <div style="flex:1;text-align:center;font-size:10px;color:var(--accent)">F</div>
+          <div style="flex:1;text-align:center;font-size:10px;color:var(--muted2)">S</div>
+          <div style="flex:1;text-align:center;font-size:10px;color:var(--muted2)">S</div>
         </div>
       </div>
-      <div style="text-align:center;margin-top:8px;">
-        <div style="font-size:13px;color:var(--muted);">Trusted by <strong style="color:var(--text)">50,000+</strong> fitness enthusiasts worldwide</div>
-      </div>
+      <div style="text-align:center;font-size:12.5px;color:var(--muted)">Trusted by <strong style="color:var(--text)">50,000+</strong> fitness enthusiasts worldwide</div>
     </div>
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════
      DASHBOARD
-══════════════════════════════════════════════ -->
+═══════════════════════════════════════════ -->
 <div class="page" id="page-dashboard">
   <div class="dash-layout">
     <div class="sidebar">
-      <div class="sidebar-section">Overview</div>
-      <button class="sidebar-item active" onclick="showPage('dashboard')"><span class="sidebar-icon">📊</span> Dashboard</button>
-      <button class="sidebar-item" onclick="showPage('bmi')"><span class="sidebar-icon">⚖️</span> BMI Calculator</button>
-      <div class="sidebar-section">Daily</div>
-      <button class="sidebar-item" onclick="showPage('goals')"><span class="sidebar-icon">🎯</span> Daily Goals</button>
-      <button class="sidebar-item" onclick="showPage('activity')"><span class="sidebar-icon">🏃</span> Activity Log</button>
-      <div class="sidebar-section">Account</div>
-      <button class="sidebar-item"><span class="sidebar-icon">👤</span> Profile</button>
-      <button class="sidebar-item"><span class="sidebar-icon">⚙️</span> Settings</button>
-      <button class="sidebar-item" onclick="showPage('home')"><span class="sidebar-icon">🚪</span> Sign Out</button>
+      <div class="sidebar-label">Overview</div>
+      <button class="sidebar-btn active" id="sb-dashboard" onclick="showPage('dashboard')"><span class="s-icon">📊</span>Dashboard</button>
+      <button class="sidebar-btn" id="sb-bmi" onclick="showPage('bmi')"><span class="s-icon">⚖️</span>BMI Calculator</button>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-label">Daily</div>
+      <button class="sidebar-btn" id="sb-goals" onclick="showPage('goals')"><span class="s-icon">🎯</span>Daily Goals</button>
+      <button class="sidebar-btn" id="sb-activity" onclick="showPage('activity')"><span class="s-icon">🏃</span>Activity Log</button>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-label">Account</div>
+      <button class="sidebar-btn" id="sb-profile" onclick="showPage('profile')"><span class="s-icon">👤</span>Profile</button>
+      <button class="sidebar-btn" onclick="showToast('⚙️ Settings coming soon','info')"><span class="s-icon">⚙️</span>Settings</button>
+      <button class="sidebar-btn" onclick="showPage('home')"><span class="s-icon">🚪</span>Sign out</button>
     </div>
     <div class="dash-main">
-      <div class="dash-header">
+      <div class="dash-topbar">
         <div>
           <div class="dash-greeting">Good morning, Alex 👋</div>
-          <div class="dash-date">Friday, June 25, 2025 · Week 26</div>
+          <div class="dash-sub">
+            Friday, June 25, 2025 · Week 26
+            <span class="streak-badge">🔥 12-day streak</span>
+          </div>
         </div>
-        <button class="btn btn-ghost" onclick="showPage('activity')">+ Log workout</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="showPage('bmi')">Check BMI</button>
+          <button class="btn btn-primary btn-sm" onclick="showPage('activity')">+ Log workout</button>
+        </div>
       </div>
 
-      <!-- METRIC CARDS -->
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">Current BMI</div>
+      <div class="metric-grid">
+        <div class="metric-card" onclick="showPage('bmi')">
+          <div class="metric-label">Current BMI <span>⚖️</span></div>
           <div class="metric-value" style="color:var(--accent)">23.4</div>
-          <div class="metric-change up">↑ Normal range</div>
+          <div class="metric-delta up">↑ Normal range</div>
         </div>
-        <div class="metric-card">
-          <div class="metric-label">Steps Today</div>
+        <div class="metric-card" onclick="showPage('goals')">
+          <div class="metric-label">Steps Today <span>🦶</span></div>
           <div class="metric-value">7,241</div>
-          <div class="metric-change up">↑ 72% of goal</div>
+          <div class="metric-delta up">↑ 72% of 10,000 goal</div>
         </div>
-        <div class="metric-card">
-          <div class="metric-label">Calories Burned</div>
-          <div class="metric-value" style="color:#ffc832">1,840</div>
-          <div class="metric-change up">↑ 84% of target</div>
+        <div class="metric-card" onclick="showPage('activity')">
+          <div class="metric-label">Calories Burned <span>🔥</span></div>
+          <div class="metric-value" style="color:var(--warn)">1,840</div>
+          <div class="metric-delta up">↑ 84% of 2,200 target</div>
         </div>
-        <div class="metric-card">
-          <div class="metric-label">Active Minutes</div>
+        <div class="metric-card" onclick="showPage('goals')">
+          <div class="metric-label">Active Minutes <span>⏱</span></div>
           <div class="metric-value" style="color:var(--accent2)">48</div>
-          <div class="metric-change down">↓ 20 min below goal</div>
+          <div class="metric-delta warn">⚠ 12 min below goal</div>
         </div>
       </div>
 
-      <!-- CHARTS -->
       <div class="dash-grid">
-        <div>
-          <div class="dash-chart-card" style="margin-bottom:24px;">
-            <div class="dash-chart-title">
-              Weight Trend
-              <div class="chart-period">
-                <button class="period-btn">1W</button>
-                <button class="period-btn active">1M</button>
-                <button class="period-btn">3M</button>
+        <!-- LEFT COLUMN -->
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div class="dash-card">
+            <div class="dash-card-title">
+              Weight Trend (kg)
+              <div class="period-btns">
+                <button class="period-btn" onclick="setPeriod(this)">1W</button>
+                <button class="period-btn active" onclick="setPeriod(this)">1M</button>
+                <button class="period-btn" onclick="setPeriod(this)">3M</button>
               </div>
             </div>
             <div class="mini-chart">
-              <div class="bar" style="height:100%;"><div class="bar-fill" style="height:68%;"></div></div>
-              <div class="bar" style="height:100%;"><div class="bar-fill" style="height:72%;"></div></div>
-              <div class="bar" style="height:100%;"><div class="bar-fill" style="height:70%;"></div></div>
-              <div class="bar" style="height:100%;"><div class="bar-fill" style="height:74%;"></div></div>
-              <div class="bar" style="height:100%;"><div class="bar-fill" style="height:69%;"></div></div>
-              <div class="bar" style="height:100%;"><div class="bar-fill" style="height:67%;"></div></div>
-              <div class="bar" style="height:100%;"><div class="bar-fill" style="height:71%;"></div></div>
-              <div class="bar highlight" style="height:100%;"><div class="bar-fill" style="height:73%;background:var(--accent);"></div></div>
+              <div class="bar" style="height:100%"><div class="bar-fill" style="height:68%"></div></div>
+              <div class="bar" style="height:100%"><div class="bar-fill" style="height:72%"></div></div>
+              <div class="bar" style="height:100%"><div class="bar-fill" style="height:70%"></div></div>
+              <div class="bar" style="height:100%"><div class="bar-fill" style="height:74%"></div></div>
+              <div class="bar" style="height:100%"><div class="bar-fill" style="height:67%"></div></div>
+              <div class="bar" style="height:100%"><div class="bar-fill" style="height:65%"></div></div>
+              <div class="bar" style="height:100%"><div class="bar-fill" style="height:71%"></div></div>
+              <div class="bar hl" style="height:100%"><div class="bar-fill" style="height:73%"></div></div>
             </div>
             <div class="chart-labels">
-              <div class="chart-label">Jun 1</div>
-              <div class="chart-label">Jun 5</div>
-              <div class="chart-label">Jun 10</div>
-              <div class="chart-label">Jun 15</div>
-              <div class="chart-label">Jun 18</div>
-              <div class="chart-label">Jun 20</div>
-              <div class="chart-label">Jun 23</div>
-              <div class="chart-label">Today</div>
+              <div class="chart-label">Jun 1</div><div class="chart-label">Jun 5</div><div class="chart-label">Jun 10</div>
+              <div class="chart-label">Jun 15</div><div class="chart-label">Jun 18</div><div class="chart-label">Jun 20</div>
+              <div class="chart-label">Jun 23</div><div class="chart-label">Today</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+              <div style="font-size:12.5px;color:var(--muted)">Starting: <strong style="color:var(--text)">72.1 kg</strong></div>
+              <div style="font-size:12.5px;color:var(--muted)">Current: <strong style="color:var(--accent)">70.3 kg</strong></div>
+              <div style="font-size:12.5px;color:var(--muted)">Change: <strong style="color:var(--accent)">−1.8 kg</strong></div>
             </div>
           </div>
 
-          <div class="dash-chart-card">
-            <div class="dash-chart-title">Recent Activity</div>
+          <div class="dash-card">
+            <div class="dash-card-title">Recent Activity <a onclick="showPage('activity')">View all →</a></div>
             <div class="activity-list">
-              <div class="activity-item">
-                <div class="activity-icon" style="background:rgba(0,229,160,.1);">🏃</div>
-                <div class="activity-info">
-                  <div class="activity-name">Morning Run</div>
-                  <div class="activity-meta">Today · 32 min · 4.2 km</div>
+              <div class="activity-item" onclick="showPage('activity')">
+                <div class="act-icon" style="background:rgba(0,229,160,.1)">🏃</div>
+                <div class="act-info">
+                  <div class="act-name">Morning Run</div>
+                  <div class="act-meta">Today · 32 min · 4.2 km · Moderate</div>
                 </div>
-                <div class="activity-cal">340 kcal</div>
+                <div class="act-cal">340 kcal</div>
               </div>
-              <div class="activity-item">
-                <div class="activity-icon" style="background:rgba(0,119,255,.1);">🚴</div>
-                <div class="activity-info">
-                  <div class="activity-name">Cycling</div>
-                  <div class="activity-meta">Yesterday · 45 min · 18 km</div>
+              <div class="activity-item" onclick="showPage('activity')">
+                <div class="act-icon" style="background:rgba(59,130,246,.1)">🚴</div>
+                <div class="act-info">
+                  <div class="act-name">Cycling</div>
+                  <div class="act-meta">Yesterday · 45 min · 18 km · Vigorous</div>
                 </div>
-                <div class="activity-cal">520 kcal</div>
+                <div class="act-cal">520 kcal</div>
               </div>
-              <div class="activity-item">
-                <div class="activity-icon" style="background:rgba(255,107,53,.1);">🏋️</div>
-                <div class="activity-info">
-                  <div class="activity-name">Strength Training</div>
-                  <div class="activity-meta">Jun 23 · 55 min</div>
+              <div class="activity-item" onclick="showPage('activity')">
+                <div class="act-icon" style="background:rgba(245,158,11,.1)">🏋️</div>
+                <div class="act-info">
+                  <div class="act-name">Strength Training</div>
+                  <div class="act-meta">Jun 23 · 55 min · Moderate intensity</div>
                 </div>
-                <div class="activity-cal">410 kcal</div>
+                <div class="act-cal">410 kcal</div>
               </div>
             </div>
+            <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:14px" onclick="showPage('activity')">Log a new workout →</button>
           </div>
         </div>
 
-        <div>
-          <div class="dash-chart-card" style="margin-bottom:24px;">
-            <div class="dash-chart-title">Today's Goals</div>
-            <div style="display:flex;flex-direction:column;gap:18px;">
-              <div>
-                <div class="goal-progress-header"><span>Steps</span><span>7,241 / 10,000</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width:72%;"></div></div>
+        <!-- RIGHT COLUMN -->
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div class="dash-card">
+            <div class="dash-card-title">Today's Goals <a onclick="showPage('goals')">Edit →</a></div>
+            <div>
+              <div class="goal-row">
+                <div class="goal-row-hd"><span>Steps</span><span>7,241 / 10,000</span></div>
+                <div class="progress prog-h6"><div class="progress-bar" style="width:72%;background:linear-gradient(90deg,var(--accent2),var(--accent))"></div></div>
               </div>
-              <div>
-                <div class="goal-progress-header"><span>Calories</span><span>1,840 / 2,200</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width:84%;background:linear-gradient(90deg,#ffc832,#ff9900);"></div></div>
+              <div class="goal-row">
+                <div class="goal-row-hd"><span>Calories burned</span><span>1,840 / 2,200</span></div>
+                <div class="progress prog-h6"><div class="progress-bar" style="width:84%;background:linear-gradient(90deg,#f59e0b,#ef4444)"></div></div>
               </div>
-              <div>
-                <div class="goal-progress-header"><span>Water</span><span>1.6 L / 2.5 L</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width:64%;background:linear-gradient(90deg,#0077ff,#4da6ff);"></div></div>
+              <div class="goal-row">
+                <div class="goal-row-hd"><span>Water intake</span><span>1.6 L / 2.5 L</span></div>
+                <div class="progress prog-h6"><div class="progress-bar" style="width:64%;background:linear-gradient(90deg,#0077ff,#60a5fa)"></div></div>
               </div>
-              <div>
-                <div class="goal-progress-header"><span>Active minutes</span><span>48 / 60 min</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width:80%;background:linear-gradient(90deg,#9b59b6,#e056e8);"></div></div>
+              <div class="goal-row">
+                <div class="goal-row-hd"><span>Active minutes</span><span>48 / 60 min</span></div>
+                <div class="progress prog-h6"><div class="progress-bar" style="width:80%;background:linear-gradient(90deg,#8b5cf6,#ec4899)"></div></div>
+              </div>
+              <div class="goal-row" style="margin-bottom:0">
+                <div class="goal-row-hd"><span>Sleep</span><span>6.5 / 8 hrs</span></div>
+                <div class="progress prog-h6"><div class="progress-bar" style="width:81%;background:linear-gradient(90deg,#1d4ed8,#60a5fa)"></div></div>
               </div>
             </div>
-            <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:20px;font-size:13px;" onclick="showPage('goals')">Edit goals →</button>
+            <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-top:14px" onclick="showPage('goals')">Adjust daily targets →</button>
           </div>
 
-          <div class="dash-chart-card">
-            <div class="dash-chart-title">BMI Status</div>
-            <div style="text-align:center;padding:20px 0;">
-              <div style="font-family:'DM Mono',monospace;font-size:52px;font-weight:500;color:var(--accent);line-height:1;">23.4</div>
-              <div style="margin:8px 0;"><span class="tag tag-green">Normal weight</span></div>
-              <div style="font-size:13px;color:var(--muted);margin-top:8px;">Ideal range: 18.5 – 24.9</div>
+          <div class="dash-card">
+            <div class="dash-card-title">BMI Status <a onclick="showPage('bmi')">Full analysis →</a></div>
+            <div style="padding:12px 0 16px">
+              <div class="bmi-big">23.4</div>
+              <div style="text-align:center;margin:8px 0"><span class="badge badge-green">Normal weight</span></div>
+              <div style="text-align:center;font-size:12px;color:var(--muted)">Ideal range: 18.5 – 24.9 · Last checked today</div>
             </div>
-            <div class="bmi-scale" style="margin-top:16px;height:10px;">
-              <div class="bmi-scale-seg" style="background:#4da6ff;border-radius:4px 0 0 4px;"></div>
-              <div class="bmi-scale-seg" style="background:var(--accent);position:relative;">
-                <div style="position:absolute;top:-16px;left:60%;transform:translateX(-50%);width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid var(--accent);"></div>
-              </div>
-              <div class="bmi-scale-seg" style="background:#ffc832;"></div>
-              <div class="bmi-scale-seg" style="background:var(--warn);border-radius:0 4px 4px 0;"></div>
+            <div class="bmi-scale" style="margin-bottom:6px"><div class="bmi-scale-seg" style="background:#60a5fa;border-radius:4px 0 0 4px"></div><div class="bmi-scale-seg" style="background:var(--accent)"></div><div class="bmi-scale-seg" style="background:var(--warn)"></div><div class="bmi-scale-seg" style="background:var(--danger);border-radius:0 4px 4px 0"></div></div>
+            <div class="bmi-cats">
+              <div class="bmi-cat-row"><div style="display:flex;align-items:center"><div class="bmi-cat-dot" style="background:#60a5fa"></div><span style="font-size:12.5px;color:var(--muted)">Underweight</span></div><span style="font-family:'DM Mono',monospace;font-size:12px">< 18.5</span></div>
+              <div class="bmi-cat-row"><div style="display:flex;align-items:center"><div class="bmi-cat-dot" style="background:var(--accent)"></div><span style="font-size:12.5px;color:var(--text);font-weight:600">Normal ← You</span></div><span style="font-family:'DM Mono',monospace;font-size:12px">18.5–24.9</span></div>
+              <div class="bmi-cat-row"><div style="display:flex;align-items:center"><div class="bmi-cat-dot" style="background:var(--warn)"></div><span style="font-size:12.5px;color:var(--muted)">Overweight</span></div><span style="font-family:'DM Mono',monospace;font-size:12px">25–29.9</span></div>
+              <div class="bmi-cat-row"><div style="display:flex;align-items:center"><div class="bmi-cat-dot" style="background:var(--danger)"></div><span style="font-size:12.5px;color:var(--muted)">Obese</span></div><span style="font-family:'DM Mono',monospace;font-size:12px">≥ 30</span></div>
             </div>
-            <div class="bmi-categories">
-              <div class="bmi-cat"><div style="display:flex;align-items:center;"><div class="bmi-cat-dot" style="background:#4da6ff;"></div><span class="bmi-cat-name">Underweight</span></div><span class="bmi-cat-range">< 18.5</span></div>
-              <div class="bmi-cat"><div style="display:flex;align-items:center;"><div class="bmi-cat-dot" style="background:var(--accent);"></div><span class="bmi-cat-name">Normal</span></div><span class="bmi-cat-range">18.5 – 24.9</span></div>
-              <div class="bmi-cat"><div style="display:flex;align-items:center;"><div class="bmi-cat-dot" style="background:#ffc832;"></div><span class="bmi-cat-name">Overweight</span></div><span class="bmi-cat-range">25 – 29.9</span></div>
-              <div class="bmi-cat"><div style="display:flex;align-items:center;"><div class="bmi-cat-dot" style="background:var(--warn);"></div><span class="bmi-cat-name">Obese</span></div><span class="bmi-cat-range">≥ 30</span></div>
-            </div>
-            <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:16px;font-size:13px;" onclick="showPage('bmi')">Full BMI analysis →</button>
           </div>
         </div>
       </div>
@@ -897,583 +1027,721 @@
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════════════
-     BMI CALCULATOR PAGE
-══════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     BMI CALCULATOR
+═══════════════════════════════════════════ -->
 <div class="page" id="page-bmi">
   <div class="bmi-layout">
-    <div style="margin-bottom:40px;">
-      <div class="hero-eyebrow" style="display:inline-flex;">BMI Calculator</div>
-      <h1 style="font-family:'Syne',sans-serif;font-size:40px;font-weight:800;letter-spacing:-1.5px;margin-top:12px;">Check your body mass index</h1>
-      <p style="color:var(--muted);font-size:16px;margin-top:8px;">Get an accurate BMI reading, ideal weight range, and personalized health insights.</p>
+    <div style="margin-bottom:32px">
+      <div class="section-eyebrow">BMI Calculator</div>
+      <h1 style="font-family:'Syne',sans-serif;font-size:34px;font-weight:800;letter-spacing:-1.5px;margin-top:10px;margin-bottom:8px">Check your body mass index</h1>
+      <p style="color:var(--muted);font-size:15px">Get an accurate BMI reading, ideal weight range, BMR, daily energy needs, and personalized health advice.</p>
     </div>
-    <div class="bmi-calc-card">
+    <div class="bmi-card">
       <div class="unit-toggle">
-        <button class="unit-btn active" onclick="setUnit('metric',this)">Metric (kg/cm)</button>
-        <button class="unit-btn" onclick="setUnit('imperial',this)">Imperial (lb/in)</button>
+        <button class="unit-btn active" onclick="setUnit('metric',this)">Metric (kg / cm)</button>
+        <button class="unit-btn" onclick="setUnit('imperial',this)">Imperial (lb / in)</button>
       </div>
-      <div class="bmi-input-grid">
+      <div class="bmi-inputs">
         <div class="form-group">
-          <label class="form-label">Age</label>
-          <input class="form-input" type="number" id="bmi-age" placeholder="28" min="1" max="120"/>
+          <label class="label">Age</label>
+          <input class="input" type="number" id="bmi-age" placeholder="28" min="1" max="120"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Sex</label>
-          <select class="form-input" id="bmi-sex">
+          <label class="label">Sex</label>
+          <select class="input" id="bmi-sex">
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Weight (kg)</label>
-          <input class="form-input" type="number" id="bmi-weight" placeholder="70" min="1"/>
+          <label class="label" id="bmi-weight-lbl">Weight (kg)</label>
+          <input class="input" type="number" id="bmi-weight" placeholder="70" min="1"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Height (cm)</label>
-          <input class="form-input" type="number" id="bmi-height" placeholder="175" min="1"/>
+          <label class="label" id="bmi-height-lbl">Height (cm)</label>
+          <input class="input" type="number" id="bmi-height" placeholder="175" min="1"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Activity Level</label>
-          <select class="form-input" id="bmi-activity">
-            <option value="1.2">Sedentary</option>
-            <option value="1.375">Lightly active</option>
-            <option value="1.55" selected>Moderately active</option>
-            <option value="1.725">Very active</option>
-            <option value="1.9">Extremely active</option>
+          <label class="label">Activity level</label>
+          <select class="input" id="bmi-activity">
+            <option value="1.2">Sedentary (desk job, no exercise)</option>
+            <option value="1.375">Lightly active (1–3 days/week)</option>
+            <option value="1.55" selected>Moderately active (3–5 days/week)</option>
+            <option value="1.725">Very active (6–7 days/week)</option>
+            <option value="1.9">Extremely active (athlete/physical job)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="label">Goal</label>
+          <select class="input" id="bmi-goal">
+            <option>Lose weight</option>
+            <option selected>Maintain weight</option>
+            <option>Gain muscle</option>
           </select>
         </div>
       </div>
-      <button class="btn btn-primary" style="font-size:16px;" onclick="calculateBMI()">Calculate BMI →</button>
+      <button class="btn btn-primary" onclick="calculateBMI()" style="font-size:15px;padding:12px 26px">Calculate BMI →</button>
 
-      <div id="bmi-result-section" style="display:none;">
-        <div class="bmi-result-card">
-          <div style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:16px;">Your BMI</div>
-          <div class="bmi-big-num" id="result-bmi-num">23.4</div>
-          <div class="bmi-status" id="result-bmi-status">Normal Weight</div>
-          <div class="bmi-scale" style="margin:0 auto 8px;max-width:400px;">
-            <div class="bmi-scale-seg" style="background:#4da6ff;border-radius:4px 0 0 4px;"></div>
-            <div class="bmi-scale-seg" style="background:var(--accent);"></div>
-            <div class="bmi-scale-seg" style="background:#ffc832;"></div>
-            <div class="bmi-scale-seg" style="background:var(--warn);border-radius:0 4px 4px 0;"></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;max-width:400px;margin:0 auto 28px;font-size:11px;color:var(--muted);">
-            <span>Underweight<br>&lt; 18.5</span><span>Normal<br>18.5–24.9</span><span>Overweight<br>25–29.9</span><span>Obese<br>≥ 30</span>
-          </div>
-          <div class="bmi-info-grid">
-            <div class="bmi-info-item">
-              <div class="bmi-info-range" id="result-ideal">60–75 kg</div>
-              <div class="bmi-info-name">Ideal weight range</div>
-            </div>
-            <div class="bmi-info-item">
-              <div class="bmi-info-range" id="result-bmr">1,780 kcal</div>
-              <div class="bmi-info-name">Basal metabolic rate</div>
-            </div>
-            <div class="bmi-info-item">
-              <div class="bmi-info-range" id="result-tdee">2,760 kcal</div>
-              <div class="bmi-info-name">Daily energy needs</div>
-            </div>
-            <div class="bmi-info-item">
-              <div class="bmi-info-range" id="result-risk" style="color:var(--accent);">Low</div>
-              <div class="bmi-info-name">Health risk level</div>
-            </div>
-          </div>
+      <div class="bmi-result" id="bmi-result">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:12px;text-align:center">Your BMI</div>
+        <div class="bmi-result-big" id="res-num"></div>
+        <div class="bmi-result-status" id="res-status"></div>
+        <div class="bmi-result-scale">
+          <div style="flex:1;background:#60a5fa;border-radius:4px 0 0 4px"></div>
+          <div style="flex:1;background:var(--accent)"></div>
+          <div style="flex:1;background:var(--warn)"></div>
+          <div style="flex:1;background:var(--danger);border-radius:0 4px 4px 0"></div>
         </div>
-        <div style="margin-top:24px;background:var(--surface2);border-radius:var(--radius);padding:24px;">
-          <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:12px;">💡 Personalized recommendation</div>
-          <div id="result-advice" style="font-size:14px;color:var(--muted);line-height:1.7;"></div>
+        <div class="bmi-result-scale-labels"><span>Under<br>&lt;18.5</span><span>Normal<br>18.5–25</span><span>Over<br>25–30</span><span>Obese<br>≥30</span></div>
+        <div class="bmi-info-grid">
+          <div class="bmi-info-item"><div class="bmi-info-val" id="res-ideal"></div><div class="bmi-info-lbl">Ideal weight</div></div>
+          <div class="bmi-info-item"><div class="bmi-info-val" id="res-bmr"></div><div class="bmi-info-lbl">BMR (daily rest)</div></div>
+          <div class="bmi-info-item"><div class="bmi-info-val" id="res-tdee"></div><div class="bmi-info-lbl">Daily energy (TDEE)</div></div>
+          <div class="bmi-info-item"><div class="bmi-info-val" id="res-risk"></div><div class="bmi-info-lbl">Health risk level</div></div>
+        </div>
+        <div class="bmi-advice">
+          <div class="bmi-advice-title">💡 Personalized recommendation</div>
+          <div class="bmi-advice-text" id="res-advice"></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px">
+          <button class="btn btn-primary btn-sm" style="flex:1;justify-content:center" onclick="showPage('goals')">Set daily goals →</button>
+          <button class="btn btn-secondary btn-sm" style="flex:1;justify-content:center" onclick="showPage('activity')">Log a workout →</button>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('📋 BMI report copied to clipboard','success')">Copy report</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════════════
-     DAILY GOALS PAGE
-══════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     DAILY GOALS
+═══════════════════════════════════════════ -->
 <div class="page" id="page-goals">
   <div class="goals-layout">
-    <div class="goals-header">
-      <div class="hero-eyebrow" style="display:inline-flex;">Daily Goals</div>
+    <div class="page-header">
+      <div class="section-eyebrow">Daily Goals</div>
       <h1>Your daily targets</h1>
-      <p>Set and track your personalized fitness goals. Adjust anytime as you progress.</p>
+      <p>Set and track your personalized fitness goals. Changes auto-save and sync across your dashboard.</p>
     </div>
 
-    <!-- TODAY'S PROGRESS RINGS (SVG) -->
-    <div class="card" style="margin-bottom:24px;text-align:center;">
-      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:24px;text-align:left;">Today's progress</div>
-      <div class="ring-container" style="flex-wrap:wrap;">
+    <!-- PROGRESS RINGS -->
+    <div class="rings-card">
+      <div class="rings-title">Today's progress</div>
+      <div class="rings-wrap">
         <div class="ring-item">
-          <svg width="100" height="100" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface2)" stroke-width="10"/>
-            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--accent)" stroke-width="10" stroke-dasharray="251" stroke-dashoffset="70" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-            <text x="50" y="46" text-anchor="middle" fill="var(--text)" font-family="DM Mono" font-size="14" font-weight="500">7,241</text>
-            <text x="50" y="60" text-anchor="middle" fill="var(--muted)" font-size="9">steps</text>
+          <svg width="96" height="96" viewBox="0 0 96 96">
+            <circle cx="48" cy="48" r="38" fill="none" stroke="var(--surface2)" stroke-width="9"/>
+            <circle cx="48" cy="48" r="38" fill="none" stroke="var(--accent)" stroke-width="9" stroke-dasharray="239" stroke-dashoffset="67" stroke-linecap="round" transform="rotate(-90 48 48)"/>
+            <text x="48" y="44" text-anchor="middle" fill="var(--text)" font-family="DM Mono" font-size="13" font-weight="500">7,241</text>
+            <text x="48" y="57" text-anchor="middle" fill="var(--muted)" font-size="9">steps</text>
           </svg>
-          <div class="ring-label">Steps</div>
-          <div class="ring-val" style="color:var(--accent)">72%</div>
+          <div class="ring-lbl">Steps</div>
+          <div class="ring-pct" style="color:var(--accent)">72%</div>
         </div>
         <div class="ring-item">
-          <svg width="100" height="100" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface2)" stroke-width="10"/>
-            <circle cx="50" cy="50" r="40" fill="none" stroke="#ffc832" stroke-width="10" stroke-dasharray="251" stroke-dashoffset="40" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-            <text x="50" y="46" text-anchor="middle" fill="var(--text)" font-family="DM Mono" font-size="12" font-weight="500">1,840</text>
-            <text x="50" y="60" text-anchor="middle" fill="var(--muted)" font-size="9">kcal</text>
+          <svg width="96" height="96" viewBox="0 0 96 96">
+            <circle cx="48" cy="48" r="38" fill="none" stroke="var(--surface2)" stroke-width="9"/>
+            <circle cx="48" cy="48" r="38" fill="none" stroke="var(--warn)" stroke-width="9" stroke-dasharray="239" stroke-dashoffset="38" stroke-linecap="round" transform="rotate(-90 48 48)"/>
+            <text x="48" y="44" text-anchor="middle" fill="var(--text)" font-family="DM Mono" font-size="11" font-weight="500">1,840</text>
+            <text x="48" y="57" text-anchor="middle" fill="var(--muted)" font-size="9">kcal</text>
           </svg>
-          <div class="ring-label">Calories</div>
-          <div class="ring-val" style="color:#ffc832">84%</div>
+          <div class="ring-lbl">Calories</div>
+          <div class="ring-pct" style="color:var(--warn)">84%</div>
         </div>
         <div class="ring-item">
-          <svg width="100" height="100" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface2)" stroke-width="10"/>
-            <circle cx="50" cy="50" r="40" fill="none" stroke="#0077ff" stroke-width="10" stroke-dasharray="251" stroke-dashoffset="90" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-            <text x="50" y="46" text-anchor="middle" fill="var(--text)" font-family="DM Mono" font-size="14" font-weight="500">1.6L</text>
-            <text x="50" y="60" text-anchor="middle" fill="var(--muted)" font-size="9">water</text>
+          <svg width="96" height="96" viewBox="0 0 96 96">
+            <circle cx="48" cy="48" r="38" fill="none" stroke="var(--surface2)" stroke-width="9"/>
+            <circle cx="48" cy="48" r="38" fill="none" stroke="#3b82f6" stroke-width="9" stroke-dasharray="239" stroke-dashoffset="86" stroke-linecap="round" transform="rotate(-90 48 48)"/>
+            <text x="48" y="44" text-anchor="middle" fill="var(--text)" font-family="DM Mono" font-size="13" font-weight="500">1.6L</text>
+            <text x="48" y="57" text-anchor="middle" fill="var(--muted)" font-size="9">water</text>
           </svg>
-          <div class="ring-label">Hydration</div>
-          <div class="ring-val" style="color:#4da6ff">64%</div>
+          <div class="ring-lbl">Hydration</div>
+          <div class="ring-pct" style="color:#60a5fa">64%</div>
         </div>
         <div class="ring-item">
-          <svg width="100" height="100" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface2)" stroke-width="10"/>
-            <circle cx="50" cy="50" r="40" fill="none" stroke="#e056e8" stroke-width="10" stroke-dasharray="251" stroke-dashoffset="50" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-            <text x="50" y="46" text-anchor="middle" fill="var(--text)" font-family="DM Mono" font-size="14" font-weight="500">48</text>
-            <text x="50" y="60" text-anchor="middle" fill="var(--muted)" font-size="9">min</text>
+          <svg width="96" height="96" viewBox="0 0 96 96">
+            <circle cx="48" cy="48" r="38" fill="none" stroke="var(--surface2)" stroke-width="9"/>
+            <circle cx="48" cy="48" r="38" fill="none" stroke="#a78bfa" stroke-width="9" stroke-dasharray="239" stroke-dashoffset="48" stroke-linecap="round" transform="rotate(-90 48 48)"/>
+            <text x="48" y="44" text-anchor="middle" fill="var(--text)" font-family="DM Mono" font-size="13" font-weight="500">48</text>
+            <text x="48" y="57" text-anchor="middle" fill="var(--muted)" font-size="9">min</text>
           </svg>
-          <div class="ring-label">Active time</div>
-          <div class="ring-val" style="color:#e056e8">80%</div>
+          <div class="ring-lbl">Active time</div>
+          <div class="ring-pct" style="color:var(--accent3)">80%</div>
         </div>
         <div class="ring-item">
-          <svg width="100" height="100" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface2)" stroke-width="10"/>
-            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--warn)" stroke-width="10" stroke-dasharray="251" stroke-dashoffset="125" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-            <text x="50" y="46" text-anchor="middle" fill="var(--text)" font-family="DM Mono" font-size="14" font-weight="500">6.5</text>
-            <text x="50" y="60" text-anchor="middle" fill="var(--muted)" font-size="9">hrs sleep</text>
+          <svg width="96" height="96" viewBox="0 0 96 96">
+            <circle cx="48" cy="48" r="38" fill="none" stroke="var(--surface2)" stroke-width="9"/>
+            <circle cx="48" cy="48" r="38" fill="none" stroke="#60a5fa" stroke-width="9" stroke-dasharray="239" stroke-dashoffset="119" stroke-linecap="round" transform="rotate(-90 48 48)"/>
+            <text x="48" y="44" text-anchor="middle" fill="var(--text)" font-family="DM Mono" font-size="13" font-weight="500">6.5</text>
+            <text x="48" y="57" text-anchor="middle" fill="var(--muted)" font-size="9">hrs sleep</text>
           </svg>
-          <div class="ring-label">Sleep</div>
-          <div class="ring-val" style="color:var(--warn)">50%</div>
+          <div class="ring-lbl">Sleep</div>
+          <div class="ring-pct" style="color:#60a5fa">81%</div>
         </div>
       </div>
     </div>
 
-    <!-- GOAL SETTING CARDS -->
     <div class="goals-grid">
+      <!-- STEPS -->
       <div class="goal-card">
-        <div class="goal-card-header">
-          <div>
-            <div class="goal-card-title">🦶 Steps Goal</div>
-            <div class="goal-card-sub">Daily walking target</div>
-          </div>
-          <span class="tag tag-green">Active</span>
+        <div class="goal-hd">
+          <div><div class="goal-title">🦶 Steps Goal</div><div class="goal-sub">Daily walking target</div></div>
+          <span class="badge badge-green">On track</span>
         </div>
-        <div class="goal-progress-wrap">
-          <div class="goal-progress-header">
-            <span class="goal-current">7,241 steps</span>
-            <span class="goal-target">Goal: 10,000</span>
-          </div>
-          <div class="progress-bar"><div class="progress-fill" style="width:72%;"></div></div>
-        </div>
-        <div class="goals-form-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="goal-prog-row"><span class="goal-curr">7,241 steps</span><span class="goal-targ">Goal: 10,000</span></div>
+        <div class="progress prog-h8"><div class="progress-bar" style="width:72%;background:linear-gradient(90deg,var(--accent2),var(--accent))"></div></div>
+        <div class="goal-inputs">
           <div class="form-group">
-            <label class="form-label">Daily target</label>
-            <input class="form-input" type="number" value="10000"/>
+            <label class="label">Daily target</label>
+            <input class="input" type="number" value="10000"/>
           </div>
           <div class="form-group">
-            <label class="form-label">Remind me</label>
-            <select class="form-input"><option>Hourly nudge</option><option>Morning only</option><option>Off</option></select>
+            <label class="label">Reminder</label>
+            <select class="input"><option>Hourly nudge</option><option>Morning only</option><option>Off</option></select>
           </div>
         </div>
+        <div class="goal-tip">💡 Even 7,000+ steps/day reduces cardiovascular risk by 50%.</div>
       </div>
 
+      <!-- CALORIES -->
       <div class="goal-card">
-        <div class="goal-card-header">
-          <div>
-            <div class="goal-card-title">🔥 Calorie Goal</div>
-            <div class="goal-card-sub">Daily energy expenditure</div>
-          </div>
-          <span class="tag tag-yellow">Active</span>
+        <div class="goal-hd">
+          <div><div class="goal-title">🔥 Calorie Goal</div><div class="goal-sub">Daily energy expenditure</div></div>
+          <span class="badge badge-amber">Almost there</span>
         </div>
-        <div class="goal-progress-wrap">
-          <div class="goal-progress-header">
-            <span class="goal-current">1,840 kcal</span>
-            <span class="goal-target">Goal: 2,200</span>
-          </div>
-          <div class="progress-bar"><div class="progress-fill" style="width:84%;background:linear-gradient(90deg,#ffc832,#ff9900);"></div></div>
-        </div>
-        <div class="goals-form-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="goal-prog-row"><span class="goal-curr">1,840 kcal</span><span class="goal-targ">Goal: 2,200</span></div>
+        <div class="progress prog-h8"><div class="progress-bar" style="width:84%;background:linear-gradient(90deg,#f59e0b,#ef4444)"></div></div>
+        <div class="goal-inputs">
           <div class="form-group">
-            <label class="form-label">Daily target (kcal)</label>
-            <input class="form-input" type="number" value="2200"/>
+            <label class="label">Target (kcal)</label>
+            <input class="input" type="number" value="2200"/>
           </div>
           <div class="form-group">
-            <label class="form-label">Goal type</label>
-            <select class="form-input"><option>Burn</option><option>Intake</option><option>Both</option></select>
+            <label class="label">Goal type</label>
+            <select class="input"><option>Burn calories</option><option>Calorie intake</option><option>Both</option></select>
           </div>
         </div>
+        <div class="goal-tip">💡 Your TDEE is ~2,760 kcal. A 500 kcal deficit = ~0.5 kg/week loss.</div>
       </div>
 
+      <!-- WATER -->
       <div class="goal-card">
-        <div class="goal-card-header">
-          <div>
-            <div class="goal-card-title">💧 Hydration Goal</div>
-            <div class="goal-card-sub">Daily water intake</div>
-          </div>
-          <span class="tag tag-blue">Active</span>
+        <div class="goal-hd">
+          <div><div class="goal-title">💧 Hydration Goal</div><div class="goal-sub">Daily water intake</div></div>
+          <span class="badge badge-blue">Needs attention</span>
         </div>
-        <div class="goal-progress-wrap">
-          <div class="goal-progress-header">
-            <span class="goal-current">1.6 L</span>
-            <span class="goal-target">Goal: 2.5 L</span>
-          </div>
-          <div class="progress-bar"><div class="progress-fill" style="width:64%;background:linear-gradient(90deg,#0077ff,#4da6ff);"></div></div>
-        </div>
-        <div class="goals-form-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="goal-prog-row"><span class="goal-curr">1.6 L</span><span class="goal-targ">Goal: 2.5 L</span></div>
+        <div class="progress prog-h8"><div class="progress-bar" style="width:64%;background:linear-gradient(90deg,#0077ff,#60a5fa)"></div></div>
+        <div class="goal-inputs">
           <div class="form-group">
-            <label class="form-label">Daily target (L)</label>
-            <input class="form-input" type="number" step="0.1" value="2.5"/>
+            <label class="label">Daily target (L)</label>
+            <input class="input" type="number" step="0.1" value="2.5"/>
           </div>
           <div class="form-group">
-            <label class="form-label">Glass size (ml)</label>
-            <input class="form-input" type="number" value="250"/>
+            <label class="label">Glass size (ml)</label>
+            <input class="input" type="number" value="250"/>
           </div>
         </div>
+        <div class="goal-tip">💡 Still 0.9L to go — drink a glass now and one more before dinner.</div>
       </div>
 
+      <!-- SLEEP -->
       <div class="goal-card">
-        <div class="goal-card-header">
-          <div>
-            <div class="goal-card-title">🌙 Sleep Goal</div>
-            <div class="goal-card-sub">Nightly rest target</div>
-          </div>
-          <span class="tag tag-orange">Below target</span>
+        <div class="goal-hd">
+          <div><div class="goal-title">🌙 Sleep Goal</div><div class="goal-sub">Nightly rest target</div></div>
+          <span class="badge badge-red">Below target</span>
         </div>
-        <div class="goal-progress-wrap">
-          <div class="goal-progress-header">
-            <span class="goal-current">6.5 hrs last night</span>
-            <span class="goal-target">Goal: 8 hrs</span>
-          </div>
-          <div class="progress-bar"><div class="progress-fill" style="width:50%;background:linear-gradient(90deg,#9b59b6,#e056e8);"></div></div>
-        </div>
-        <div class="goals-form-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="goal-prog-row"><span class="goal-curr">6.5 hrs last night</span><span class="goal-targ">Goal: 8 hrs</span></div>
+        <div class="progress prog-h8"><div class="progress-bar" style="width:81%;background:linear-gradient(90deg,#1d4ed8,#60a5fa)"></div></div>
+        <div class="goal-inputs">
           <div class="form-group">
-            <label class="form-label">Target (hours)</label>
-            <input class="form-input" type="number" step="0.5" value="8"/>
+            <label class="label">Target (hours)</label>
+            <input class="input" type="number" step="0.5" value="8"/>
           </div>
           <div class="form-group">
-            <label class="form-label">Bedtime reminder</label>
-            <input class="form-input" type="time" value="22:30"/>
+            <label class="label">Bedtime reminder</label>
+            <input class="input" type="time" value="22:30"/>
           </div>
         </div>
+        <div class="goal-tip">💡 Try sleeping 30 min earlier tonight — even small gains improve recovery.</div>
       </div>
     </div>
 
-    <div class="goals-actions">
-      <button class="btn btn-ghost">Reset to defaults</button>
-      <button class="btn btn-primary" onclick="showToast('Goals saved successfully!')">Save goals →</button>
+    <div class="goals-footer" style="margin-top:20px">
+      <div class="goals-footer-note">Changes are applied to today's dashboard immediately.</div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost btn-sm" onclick="showToast('Goals reset to recommended defaults','info')">Reset defaults</button>
+        <button class="btn btn-secondary btn-sm" onclick="showPage('dashboard')">View dashboard</button>
+        <button class="btn btn-primary btn-sm" onclick="showToast('✓ Goals saved successfully','success')">Save goals →</button>
+      </div>
     </div>
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════════════
-     DAILY ACTIVITY PAGE
-══════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════
+     ACTIVITY LOG
+═══════════════════════════════════════════ -->
 <div class="page" id="page-activity">
   <div class="activity-layout">
-    <div class="activity-header">
+    <div class="act-header">
       <div>
-        <div class="hero-eyebrow" style="display:inline-flex;margin-bottom:12px;">Activity Log</div>
-        <h1>Daily Activity</h1>
-        <div style="color:var(--muted);font-size:15px;margin-top:4px;">Friday, June 25, 2025</div>
+        <div class="section-eyebrow">Activity Log</div>
+        <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1px;margin-bottom:4px">Daily Activity</h1>
+        <div style="color:var(--muted);font-size:14px">Friday, June 25, 2025</div>
       </div>
-      <div style="display:flex;gap:12px;align-items:center;">
-        <input type="date" class="form-input" style="width:auto;" value="2025-06-25"/>
-        <button class="btn btn-ghost">Export CSV</button>
-      </div>
-    </div>
-
-    <!-- TODAY METRICS -->
-    <div class="activity-today-grid">
-      <div class="act-metric">
-        <div class="act-metric-icon">🏃</div>
-        <div class="act-metric-num">7,241</div>
-        <div class="act-metric-label">Steps</div>
-      </div>
-      <div class="act-metric">
-        <div class="act-metric-icon">🔥</div>
-        <div class="act-metric-num">1,840</div>
-        <div class="act-metric-label">kcal burned</div>
-      </div>
-      <div class="act-metric">
-        <div class="act-metric-icon">⏱️</div>
-        <div class="act-metric-num">48 min</div>
-        <div class="act-metric-label">Active time</div>
-      </div>
-      <div class="act-metric">
-        <div class="act-metric-icon">📏</div>
-        <div class="act-metric-num">5.2 km</div>
-        <div class="act-metric-label">Distance</div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <input type="date" class="input" style="width:auto" value="2025-06-25"/>
+        <button class="btn btn-ghost btn-sm" onclick="showToast('📊 CSV exported successfully','success')">Export CSV</button>
+        <button class="btn btn-secondary btn-sm" onclick="showPage('goals')">View goals</button>
       </div>
     </div>
 
-    <!-- LOG ACTIVITY FORM -->
-    <div class="log-form">
-      <div class="log-form-title">Log a workout</div>
-      <div class="log-form-grid">
+    <div class="act-today-grid">
+      <div class="act-today-card" onclick="showPage('goals')">
+        <div class="act-today-icon">🦶</div>
+        <div class="act-today-num">7,241</div>
+        <div class="act-today-lbl">Steps</div>
+        <div class="act-today-delta">72% of goal</div>
+      </div>
+      <div class="act-today-card" onclick="showPage('goals')">
+        <div class="act-today-icon">🔥</div>
+        <div class="act-today-num">1,840</div>
+        <div class="act-today-lbl">kcal burned</div>
+        <div class="act-today-delta">84% of goal</div>
+      </div>
+      <div class="act-today-card" onclick="showPage('goals')">
+        <div class="act-today-icon">⏱️</div>
+        <div class="act-today-num">48 min</div>
+        <div class="act-today-lbl">Active time</div>
+        <div class="act-today-delta">80% of goal</div>
+      </div>
+      <div class="act-today-card" onclick="showPage('dashboard')">
+        <div class="act-today-icon">📏</div>
+        <div class="act-today-num">5.2 km</div>
+        <div class="act-today-lbl">Distance today</div>
+        <div class="act-today-delta">↑ vs. yesterday</div>
+      </div>
+    </div>
+
+    <!-- LOG FORM -->
+    <div class="log-card">
+      <div class="log-title">Log a workout</div>
+      <div class="log-grid">
         <div class="form-group">
-          <label class="form-label">Activity</label>
-          <select class="form-input" id="act-type">
-            <option>Running</option>
-            <option>Cycling</option>
-            <option>Swimming</option>
-            <option>Walking</option>
-            <option>Weight Training</option>
-            <option>Yoga</option>
-            <option>HIIT</option>
-            <option>Basketball</option>
-            <option>Football</option>
-            <option>Other</option>
+          <label class="label">Activity type</label>
+          <select class="input" id="act-type">
+            <option>Running</option><option>Cycling</option><option>Swimming</option>
+            <option>Walking</option><option>Weight Training</option><option>Yoga</option>
+            <option>HIIT</option><option>Basketball</option><option>Football</option>
+            <option>Pilates</option><option>Rowing</option><option>Other</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Duration (min)</label>
-          <input class="form-input" type="number" id="act-duration" placeholder="30"/>
+          <label class="label">Duration (min)</label>
+          <input class="input" type="number" id="act-duration" placeholder="30" min="1"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Distance (km)</label>
-          <input class="form-input" type="number" id="act-distance" placeholder="5.0" step="0.1"/>
+          <label class="label">Distance (km)</label>
+          <input class="input" type="number" id="act-distance" placeholder="5.0" step="0.1"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Intensity</label>
-          <select class="form-input" id="act-intensity">
-            <option>Light</option>
-            <option selected>Moderate</option>
-            <option>Vigorous</option>
-            <option>Max effort</option>
+          <label class="label">Intensity</label>
+          <select class="input" id="act-intensity">
+            <option>Light</option><option selected>Moderate</option><option>Vigorous</option><option>Max effort</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">&nbsp;</label>
-          <button class="btn btn-primary" onclick="logActivity()">Add →</button>
+          <label class="label">&nbsp;</label>
+          <button class="btn btn-primary" onclick="logActivity()" style="width:100%;justify-content:center">Add →</button>
         </div>
+      </div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12.5px;color:var(--muted)">
+        Estimated calories will be auto-calculated based on activity type, duration, and intensity.
       </div>
     </div>
 
-    <!-- WORKOUT HISTORY TABLE -->
-    <div class="workout-history">
-      <div class="history-title">
+    <!-- HISTORY TABLE -->
+    <div class="history-card">
+      <div class="history-hd">
         Workout history
-        <span class="tag tag-green">5 this week</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="badge badge-green">5 this week</span>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('🗑 All entries cleared','info')">Clear all</button>
+        </div>
       </div>
-      <table class="history-table" id="history-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Activity</th>
-            <th>Duration</th>
-            <th>Distance</th>
-            <th>Calories</th>
-            <th>Intensity</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="history-body">
-          <tr>
-            <td style="color:var(--muted);font-size:13px;">Jun 25</td>
-            <td><div style="display:flex;align-items:center;gap:8px;"><span>🏃</span> Running</div></td>
-            <td><span style="font-family:'DM Mono',monospace;">32 min</span></td>
-            <td>4.2 km</td>
-            <td><span style="color:var(--accent);font-family:'DM Mono',monospace;">340 kcal</span></td>
-            <td><span class="tag tag-yellow">Moderate</span></td>
-            <td><button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;" onclick="this.closest('tr').remove()">✕</button></td>
-          </tr>
-          <tr>
-            <td style="color:var(--muted);font-size:13px;">Jun 24</td>
-            <td><div style="display:flex;align-items:center;gap:8px;"><span>🚴</span> Cycling</div></td>
-            <td><span style="font-family:'DM Mono',monospace;">45 min</span></td>
-            <td>18 km</td>
-            <td><span style="color:var(--accent);font-family:'DM Mono',monospace;">520 kcal</span></td>
-            <td><span class="tag tag-orange">Vigorous</span></td>
-            <td><button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;" onclick="this.closest('tr').remove()">✕</button></td>
-          </tr>
-          <tr>
-            <td style="color:var(--muted);font-size:13px;">Jun 23</td>
-            <td><div style="display:flex;align-items:center;gap:8px;"><span>🏋️</span> Weight Training</div></td>
-            <td><span style="font-family:'DM Mono',monospace;">55 min</span></td>
-            <td>—</td>
-            <td><span style="color:var(--accent);font-family:'DM Mono',monospace;">410 kcal</span></td>
-            <td><span class="tag tag-yellow">Moderate</span></td>
-            <td><button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;" onclick="this.closest('tr').remove()">✕</button></td>
-          </tr>
-          <tr>
-            <td style="color:var(--muted);font-size:13px;">Jun 22</td>
-            <td><div style="display:flex;align-items:center;gap:8px;"><span>🧘</span> Yoga</div></td>
-            <td><span style="font-family:'DM Mono',monospace;">60 min</span></td>
-            <td>—</td>
-            <td><span style="color:var(--accent);font-family:'DM Mono',monospace;">180 kcal</span></td>
-            <td><span class="tag tag-blue">Light</span></td>
-            <td><button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;" onclick="this.closest('tr').remove()">✕</button></td>
-          </tr>
-          <tr>
-            <td style="color:var(--muted);font-size:13px;">Jun 20</td>
-            <td><div style="display:flex;align-items:center;gap:8px;"><span>🏊</span> Swimming</div></td>
-            <td><span style="font-family:'DM Mono',monospace;">40 min</span></td>
-            <td>1.5 km</td>
-            <td><span style="color:var(--accent);font-family:'DM Mono',monospace;">390 kcal</span></td>
-            <td><span class="tag tag-orange">Vigorous</span></td>
-            <td><button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;" onclick="this.closest('tr').remove()">✕</button></td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="overflow-x:auto">
+        <table class="hist-table">
+          <thead>
+            <tr>
+              <th>Date</th><th>Activity</th><th>Duration</th><th>Distance</th>
+              <th>Calories</th><th>Intensity</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="history-body">
+            <tr onclick="showToast('Running — 340 kcal · 32 min · 4.2 km · Moderate','info')">
+              <td style="color:var(--muted2);font-size:12px">Jun 25</td>
+              <td><div style="display:flex;align-items:center;gap:7px">🏃 Running</div></td>
+              <td style="font-family:'DM Mono',monospace">32 min</td>
+              <td>4.2 km</td>
+              <td style="color:var(--accent);font-family:'DM Mono',monospace">340 kcal</td>
+              <td><span class="badge badge-amber">Moderate</span></td>
+              <td><button class="del-btn" onclick="event.stopPropagation();this.closest('tr').remove();showToast('Entry deleted','info')">✕</button></td>
+            </tr>
+            <tr onclick="showToast('Cycling — 520 kcal · 45 min · 18 km · Vigorous','info')">
+              <td style="color:var(--muted2);font-size:12px">Jun 24</td>
+              <td><div style="display:flex;align-items:center;gap:7px">🚴 Cycling</div></td>
+              <td style="font-family:'DM Mono',monospace">45 min</td>
+              <td>18 km</td>
+              <td style="color:var(--accent);font-family:'DM Mono',monospace">520 kcal</td>
+              <td><span class="badge badge-red">Vigorous</span></td>
+              <td><button class="del-btn" onclick="event.stopPropagation();this.closest('tr').remove();showToast('Entry deleted','info')">✕</button></td>
+            </tr>
+            <tr onclick="showToast('Weight Training — 410 kcal · 55 min · Moderate','info')">
+              <td style="color:var(--muted2);font-size:12px">Jun 23</td>
+              <td><div style="display:flex;align-items:center;gap:7px">🏋️ Weight Training</div></td>
+              <td style="font-family:'DM Mono',monospace">55 min</td>
+              <td>—</td>
+              <td style="color:var(--accent);font-family:'DM Mono',monospace">410 kcal</td>
+              <td><span class="badge badge-amber">Moderate</span></td>
+              <td><button class="del-btn" onclick="event.stopPropagation();this.closest('tr').remove();showToast('Entry deleted','info')">✕</button></td>
+            </tr>
+            <tr onclick="showToast('Yoga — 180 kcal · 60 min · Light','info')">
+              <td style="color:var(--muted2);font-size:12px">Jun 22</td>
+              <td><div style="display:flex;align-items:center;gap:7px">🧘 Yoga</div></td>
+              <td style="font-family:'DM Mono',monospace">60 min</td>
+              <td>—</td>
+              <td style="color:var(--accent);font-family:'DM Mono',monospace">180 kcal</td>
+              <td><span class="badge badge-blue">Light</span></td>
+              <td><button class="del-btn" onclick="event.stopPropagation();this.closest('tr').remove();showToast('Entry deleted','info')">✕</button></td>
+            </tr>
+            <tr onclick="showToast('Swimming — 390 kcal · 40 min · 1.5 km · Vigorous','info')">
+              <td style="color:var(--muted2);font-size:12px">Jun 20</td>
+              <td><div style="display:flex;align-items:center;gap:7px">🏊 Swimming</div></td>
+              <td style="font-family:'DM Mono',monospace">40 min</td>
+              <td>1.5 km</td>
+              <td style="color:var(--accent);font-family:'DM Mono',monospace">390 kcal</td>
+              <td><span class="badge badge-red">Vigorous</span></td>
+              <td><button class="del-btn" onclick="event.stopPropagation();this.closest('tr').remove();showToast('Entry deleted','info')">✕</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+        <div style="font-size:13px;color:var(--muted)">Total this week: <strong style="color:var(--text)">1,840 kcal burned · 4 hrs 12 min active</strong></div>
+        <button class="btn btn-ghost btn-sm" onclick="showPage('dashboard')">View in dashboard →</button>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     PROFILE PAGE
+═══════════════════════════════════════════ -->
+<div class="page" id="page-profile">
+  <div class="profile-layout">
+    <div style="margin-bottom:28px">
+      <div class="section-eyebrow">Profile</div>
+      <h1 style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1px;margin-top:10px;margin-bottom:6px">Your profile</h1>
+      <p style="color:var(--muted);font-size:15px">Manage your personal details, health metrics, and account preferences.</p>
+    </div>
 
-<!-- ════════════════════════════════════════
+    <div class="profile-hero">
+      <div class="profile-avatar">
+        AJ
+        <div class="profile-avatar-edit" onclick="showToast('📷 Photo upload coming soon','info')">✏️</div>
+      </div>
+      <div class="profile-info">
+        <h2>Alex Johnson</h2>
+        <p>alex@example.com · Member since Jan 2025</p>
+        <div class="profile-badges">
+          <span class="badge badge-green">Normal BMI</span>
+          <span class="badge badge-amber">🔥 12-day streak</span>
+          <span class="badge badge-purple">Pro member</span>
+        </div>
+      </div>
+      <div style="margin-left:auto;display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-secondary btn-sm" onclick="showToast('✓ Profile saved','success')">Save changes</button>
+        <button class="btn btn-ghost btn-sm" onclick="showPage('home')">Sign out</button>
+      </div>
+    </div>
+
+    <div class="profile-grid">
+      <div class="card">
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:18px">Personal details</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="form-row-2">
+            <div class="form-group"><label class="label">First name</label><input class="input" value="Alex"/></div>
+            <div class="form-group"><label class="label">Last name</label><input class="input" value="Johnson"/></div>
+          </div>
+          <div class="form-group"><label class="label">Email</label><input class="input" type="email" value="alex@example.com"/></div>
+          <div class="form-row-2">
+            <div class="form-group"><label class="label">Age</label><input class="input" type="number" value="28"/></div>
+            <div class="form-group"><label class="label">Sex</label><select class="input"><option selected>Male</option><option>Female</option><option>Other</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:18px">Health metrics</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="form-row-2">
+            <div class="form-group"><label class="label">Weight (kg)</label><input class="input" type="number" value="70.3"/></div>
+            <div class="form-group"><label class="label">Height (cm)</label><input class="input" type="number" value="173"/></div>
+          </div>
+          <div class="form-group"><label class="label">Activity level</label>
+            <select class="input"><option>Sedentary</option><option>Lightly active</option><option selected>Moderately active</option><option>Very active</option><option>Extremely active</option></select>
+          </div>
+          <div class="form-group"><label class="label">Primary goal</label>
+            <select class="input"><option>Lose weight</option><option selected>Maintain weight</option><option>Gain muscle</option></select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" style="width:100%;justify-content:center;margin-top:16px" onclick="showPage('bmi')">Recalculate BMI →</button>
+      </div>
+
+      <div class="card">
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:18px">Achievements</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border-radius:10px">
+            <div style="font-size:24px">🔥</div>
+            <div><div style="font-size:13.5px;font-weight:600">12-day streak</div><div style="font-size:11.5px;color:var(--muted)">12 consecutive days active</div></div>
+            <span class="badge badge-amber" style="margin-left:auto">Earned</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border-radius:10px">
+            <div style="font-size:24px">🎯</div>
+            <div><div style="font-size:13.5px;font-weight:600">Goal crusher</div><div style="font-size:11.5px;color:var(--muted)">Hit all daily goals in one day</div></div>
+            <span class="badge badge-green" style="margin-left:auto">Earned</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border-radius:10px;opacity:.55">
+            <div style="font-size:24px">🏆</div>
+            <div><div style="font-size:13.5px;font-weight:600">30-day warrior</div><div style="font-size:11.5px;color:var(--muted)">30 consecutive days active</div></div>
+            <span class="badge badge-purple" style="margin-left:auto">18 to go</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:18px">Account settings</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--surface2);border-radius:10px;cursor:pointer" onclick="showToast('Notifications updated','success')">
+            <div><div style="font-size:13.5px;font-weight:500">Push notifications</div><div style="font-size:11.5px;color:var(--muted)">Goal reminders and streak alerts</div></div>
+            <div style="width:36px;height:20px;background:var(--accent);border-radius:999px;position:relative"><div style="width:16px;height:16px;background:#000;border-radius:50%;position:absolute;right:2px;top:2px"></div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--surface2);border-radius:10px;cursor:pointer" onclick="showToast('Weekly digest updated','success')">
+            <div><div style="font-size:13.5px;font-weight:500">Weekly digest email</div><div style="font-size:11.5px;color:var(--muted)">Summary of your week's progress</div></div>
+            <div style="width:36px;height:20px;background:var(--accent);border-radius:999px;position:relative"><div style="width:16px;height:16px;background:#000;border-radius:50%;position:absolute;right:2px;top:2px"></div></div>
+          </div>
+          <button class="btn btn-danger btn-sm" style="width:100%;justify-content:center;margin-top:4px" onclick="showToast('⚠️ Delete account: please contact support','info')">Delete account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════
      JAVASCRIPT
-════════════════════════════════════════ -->
+════════════════════════ -->
 <script>
-  /* PAGE NAVIGATION */
-  function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-' + id).classList.add('active');
-    document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
-    const navEl = document.getElementById('nav-' + id);
-    if (navEl) navEl.classList.add('active');
-    window.scrollTo(0, 0);
+/* ─── PAGE NAV ─── */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+
+  // nav highlight
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+
+  // sidebar highlight
+  document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+  const sbEl = document.getElementById('sb-' + id);
+  if (sbEl) sbEl.classList.add('active');
+
+  window.scrollTo(0, 0);
+  closeNotif();
+}
+
+/* ─── TOAST ─── */
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast toast-' + type + ' show';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/* ─── LOGIN ─── */
+function loginSuccess() {
+  showPage('dashboard');
+  showToast('✓ Welcome back, Alex!', 'success');
+}
+
+function switchLoginTab(id, btn) {
+  document.querySelectorAll('.login-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('signin-form').style.display = id === 'signin' ? 'block' : 'none';
+  document.getElementById('signup-form').style.display = id === 'signup' ? 'block' : 'none';
+}
+
+function togglePw(id, btn) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+
+/* ─── NOTIFICATION PANEL ─── */
+function toggleNotif() {
+  const p = document.getElementById('notif-panel');
+  p.classList.toggle('open');
+}
+function closeNotif() { document.getElementById('notif-panel').classList.remove('open'); }
+function markAllRead() {
+  document.querySelectorAll('.notif-item').forEach(n => n.classList.remove('unread'));
+  document.querySelectorAll('.notif-dot').forEach(d => d.classList.add('read'));
+  const btn = document.querySelector('.nav-notif');
+  btn.style.setProperty('--dot', 'none');
+  showToast('All notifications marked as read', 'success');
+}
+document.addEventListener('click', e => {
+  const panel = document.getElementById('notif-panel');
+  const notifBtn = document.getElementById('nav-notif');
+  if (panel.classList.contains('open') && !panel.contains(e.target) && e.target !== notifBtn) closeNotif();
+});
+
+/* ─── PROFILE MODAL ─── */
+function openProfileModal() { document.getElementById('profile-modal').classList.add('open'); }
+function closeProfileModal() { document.getElementById('profile-modal').classList.remove('open'); }
+function closeModal(e) { if (e.target === e.currentTarget) closeProfileModal(); }
+
+/* ─── HERO BMI QUICK ─── */
+function calcHeroBMI() {
+  const w = parseFloat(document.getElementById('hw-weight').value);
+  const h = parseFloat(document.getElementById('hw-height').value) / 100;
+  const numEl = document.getElementById('hero-bmi-num');
+  const catEl = document.getElementById('hero-bmi-cat');
+  const extraEl = document.getElementById('hero-bmi-extra');
+  if (!w || !h || h <= 0) {
+    numEl.textContent = '—'; numEl.style.color = 'var(--accent)';
+    catEl.textContent = 'Enter your details above'; extraEl.style.display = 'none'; return;
   }
+  const bmi = (w / (h * h)).toFixed(1);
+  let cat, col, tip;
+  if (bmi < 18.5) { cat = 'Underweight'; col = '#60a5fa'; tip = 'Consider increasing calorie intake and strength training.'; }
+  else if (bmi < 25) { cat = 'Normal weight ✓'; col = 'var(--accent)'; tip = 'Great! Maintain with regular exercise and a balanced diet.'; }
+  else if (bmi < 30) { cat = 'Overweight'; col = 'var(--warn)'; tip = 'A small calorie deficit and cardio can help reach your goal.'; }
+  else { cat = 'Obese — consult a doctor'; col = 'var(--danger)'; tip = 'Please consult your GP for a safe, personalized plan.'; }
+  numEl.textContent = bmi; numEl.style.color = col;
+  catEl.textContent = cat; catEl.style.color = col;
+  extraEl.textContent = tip; extraEl.style.display = 'block';
+}
 
-  /* TOAST */
-  function showToast(msg = '✓ Saved successfully') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
+/* ─── BMI UNIT TOGGLE ─── */
+let currentUnit = 'metric';
+function setUnit(unit, btn) {
+  currentUnit = unit;
+  document.querySelectorAll('.unit-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const wl = document.getElementById('bmi-weight-lbl');
+  const hl = document.getElementById('bmi-height-lbl');
+  const wi = document.getElementById('bmi-weight');
+  const hi = document.getElementById('bmi-height');
+  if (unit === 'metric') {
+    wl.textContent = 'Weight (kg)'; hl.textContent = 'Height (cm)';
+    wi.placeholder = '70'; hi.placeholder = '175';
+  } else {
+    wl.textContent = 'Weight (lbs)'; hl.textContent = 'Height (in)';
+    wi.placeholder = '154'; hi.placeholder = '69';
   }
+}
 
-  /* LOGIN TABS */
-  function switchTab(group, id, btn) {
-    document.querySelectorAll('.login-tab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('signin-form').style.display = id === 'signin' ? 'block' : 'none';
-    document.getElementById('signup-form').style.display = id === 'signup' ? 'block' : 'none';
+/* ─── FULL BMI CALC ─── */
+function calculateBMI() {
+  let weight = parseFloat(document.getElementById('bmi-weight').value);
+  let height = parseFloat(document.getElementById('bmi-height').value);
+  const age = parseInt(document.getElementById('bmi-age').value) || 28;
+  const sex = document.getElementById('bmi-sex').value;
+  const act = parseFloat(document.getElementById('bmi-activity').value);
+  const goal = document.getElementById('bmi-goal').value;
+  if (!weight || !height) { showToast('Enter weight and height to calculate','error'); return; }
+  if (currentUnit === 'imperial') { weight *= 0.453592; height *= 2.54; }
+  const hm = height / 100;
+  const bmi = parseFloat((weight / (hm * hm)).toFixed(1));
+  let bmr = sex === 'male' ? 10*weight + 6.25*height - 5*age + 5 : 10*weight + 6.25*height - 5*age - 161;
+  const tdee = Math.round(bmr * act);
+  bmr = Math.round(bmr);
+  const minIdeal = (18.5 * hm * hm).toFixed(1);
+  const maxIdeal = (24.9 * hm * hm).toFixed(1);
+  let status, col, risk, advice;
+  if (bmi < 18.5) {
+    status = 'Underweight'; col = '#60a5fa'; risk = 'Moderate';
+    advice = `Your BMI of ${bmi} is in the underweight range. Focus on nutrient-dense foods to gain healthy weight gradually. Add 300–500 kcal above your TDEE (${tdee.toLocaleString()} kcal). Strength training 3× per week will help build lean muscle mass. Consider consulting a registered dietitian for a personalized meal plan.`;
+  } else if (bmi < 25) {
+    status = 'Normal weight'; col = 'var(--accent)'; risk = 'Low';
+    advice = `Excellent — your BMI of ${bmi} is in the healthy range. Maintain this with 150+ min/week of moderate exercise and a varied, balanced diet. Your TDEE is ~${tdee.toLocaleString()} kcal/day. ${goal === 'Gain muscle' ? 'For muscle gain, eat 200–300 kcal above TDEE and prioritize protein (1.6–2.2 g/kg of body weight).' : 'Keep tracking to catch early changes.'}`;
+  } else if (bmi < 30) {
+    status = 'Overweight'; col = 'var(--warn)'; risk = 'Moderate';
+    advice = `Your BMI of ${bmi} is in the overweight range. A 500 kcal deficit below your TDEE (${tdee.toLocaleString()} kcal → target ~${(tdee-500).toLocaleString()} kcal) leads to ~0.5 kg/week of sustainable fat loss. Combine this with 3–5 cardio sessions per week and 2 strength sessions. Even a 5% weight reduction significantly lowers cardiovascular risk.`;
+  } else {
+    status = 'Obese'; col = 'var(--danger)'; risk = 'High';
+    advice = `Your BMI of ${bmi} indicates obesity, associated with increased risk of cardiovascular disease, type 2 diabetes, sleep apnea, and joint problems. We recommend consulting your GP to create a safe, medically supervised plan. Start with achievable changes: 20-min daily walks, portion control, and reducing ultra-processed foods. Small daily deficits compound significantly over time.`;
   }
+  document.getElementById('res-num').textContent = bmi;
+  document.getElementById('res-num').style.color = col;
+  document.getElementById('res-status').textContent = status;
+  document.getElementById('res-ideal').textContent = `${minIdeal}–${maxIdeal} kg`;
+  document.getElementById('res-bmr').textContent = `${bmr.toLocaleString()} kcal`;
+  document.getElementById('res-tdee').textContent = `${tdee.toLocaleString()} kcal`;
+  document.getElementById('res-risk').textContent = risk;
+  document.getElementById('res-risk').style.color = col;
+  document.getElementById('res-advice').textContent = advice;
+  const res = document.getElementById('bmi-result');
+  res.style.display = 'block';
+  setTimeout(() => res.scrollIntoView({behavior:'smooth',block:'nearest'}), 50);
+}
 
-  /* HERO BMI QUICK */
-  function calcHeroBMI() {
-    const w = parseFloat(document.getElementById('hw-weight').value);
-    const h = parseFloat(document.getElementById('hw-height').value) / 100;
-    const numEl = document.getElementById('hero-bmi-num');
-    const lblEl = document.getElementById('hero-bmi-label');
-    if (!w || !h || h <= 0) { numEl.textContent = '—'; lblEl.textContent = 'Enter your details above'; return; }
-    const bmi = (w / (h * h)).toFixed(1);
-    numEl.textContent = bmi;
-    let cat, col;
-    if (bmi < 18.5) { cat = 'Underweight'; col = '#4da6ff'; }
-    else if (bmi < 25) { cat = 'Normal weight'; col = 'var(--accent)'; }
-    else if (bmi < 30) { cat = 'Overweight'; col = '#ffc832'; }
-    else { cat = 'Obese'; col = 'var(--warn)'; }
-    numEl.style.color = col;
-    lblEl.textContent = cat;
-  }
+/* ─── ACTIVITY LOG ─── */
+const ACT_ICONS = {Running:'🏃',Cycling:'🚴',Swimming:'🏊',Walking:'🚶','Weight Training':'🏋️',Yoga:'🧘',HIIT:'⚡',Basketball:'🏀',Football:'⚽',Pilates:'🤸',Rowing:'🚣',Other:'🏃'};
+const ACT_MET = {Running:9.8,Cycling:7.5,Swimming:8.0,Walking:3.5,'Weight Training':5.0,Yoga:2.8,HIIT:10.0,Basketball:7.0,Football:7.5,Pilates:3.5,Rowing:7.0,Other:5.0};
+const INTENSITY_MULT = {Light:0.72,Moderate:1.0,Vigorous:1.32,'Max effort':1.6};
+const INTENSITY_BADGE = {Light:'badge-blue',Moderate:'badge-amber',Vigorous:'badge-red','Max effort':'badge-red'};
 
-  /* UNIT TOGGLE */
-  let currentUnit = 'metric';
-  function setUnit(unit, btn) {
-    currentUnit = unit;
-    document.querySelectorAll('.unit-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const wLabel = document.querySelector('#bmi-weight').closest('.form-group').querySelector('.form-label');
-    const hLabel = document.querySelector('#bmi-height').closest('.form-group').querySelector('.form-label');
-    if (unit === 'metric') { wLabel.textContent = 'Weight (kg)'; hLabel.textContent = 'Height (cm)'; document.getElementById('bmi-weight').placeholder='70'; document.getElementById('bmi-height').placeholder='175'; }
-    else { wLabel.textContent = 'Weight (lbs)'; hLabel.textContent = 'Height (in)'; document.getElementById('bmi-weight').placeholder='154'; document.getElementById('bmi-height').placeholder='69'; }
-  }
+function logActivity() {
+  const type = document.getElementById('act-type').value;
+  const dur = parseInt(document.getElementById('act-duration').value);
+  const dist = document.getElementById('act-distance').value;
+  const intensity = document.getElementById('act-intensity').value;
+  if (!dur || dur < 1) { showToast('Enter a valid duration in minutes','error'); return; }
+  const MET = ACT_MET[type] || 5;
+  const mult = INTENSITY_MULT[intensity] || 1;
+  const cals = Math.round(MET * mult * 70 * (dur / 60));
+  const badge = INTENSITY_BADGE[intensity] || 'badge-amber';
+  const tbody = document.getElementById('history-body');
+  const row = document.createElement('tr');
+  row.onclick = () => showToast(`${type} — ${cals} kcal · ${dur} min${dist ? ' · ' + dist + ' km' : ''} · ${intensity}`, 'info');
+  row.innerHTML = `
+    <td style="color:var(--muted2);font-size:12px">Today</td>
+    <td><div style="display:flex;align-items:center;gap:7px">${ACT_ICONS[type]||'🏃'} ${type}</div></td>
+    <td style="font-family:'DM Mono',monospace">${dur} min</td>
+    <td>${dist ? dist+' km' : '—'}</td>
+    <td style="color:var(--accent);font-family:'DM Mono',monospace">${cals} kcal</td>
+    <td><span class="badge ${badge}">${intensity}</span></td>
+    <td><button class="del-btn" onclick="event.stopPropagation();this.closest('tr').remove();showToast('Entry deleted','info')">✕</button></td>`;
+  tbody.prepend(row);
+  document.getElementById('act-duration').value = '';
+  document.getElementById('act-distance').value = '';
+  showToast(`✓ ${type} logged — ${cals} kcal burned`, 'success');
+}
 
-  /* FULL BMI CALCULATOR */
-  function calculateBMI() {
-    let weight = parseFloat(document.getElementById('bmi-weight').value);
-    let height = parseFloat(document.getElementById('bmi-height').value);
-    const age = parseInt(document.getElementById('bmi-age').value) || 28;
-    const sex = document.getElementById('bmi-sex').value;
-    const actFactor = parseFloat(document.getElementById('bmi-activity').value);
+/* ─── PERIOD BUTTONS ─── */
+function setPeriod(btn) {
+  btn.closest('.period-btns').querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  showToast('Chart updated: ' + btn.textContent, 'info');
+}
 
-    if (!weight || !height) { showToast('Please enter weight and height'); return; }
-
-    // Convert imperial
-    if (currentUnit === 'imperial') { weight = weight * 0.453592; height = height * 2.54; }
-
-    const heightM = height / 100;
-    const bmi = parseFloat((weight / (heightM * heightM)).toFixed(1));
-
-    // BMR (Mifflin-St Jeor)
-    let bmr;
-    if (sex === 'male') bmr = 10 * weight + 6.25 * height - 5 * age + 5;
-    else bmr = 10 * weight + 6.25 * height - 5 * age - 161;
-    const tdee = Math.round(bmr * actFactor);
-
-    // Ideal weight
-    const minIdeal = (18.5 * heightM * heightM).toFixed(1);
-    const maxIdeal = (24.9 * heightM * heightM).toFixed(1);
-
-    let status, color, risk, advice;
-    if (bmi < 18.5) {
-      status = 'Underweight'; color = '#4da6ff'; risk = 'Moderate';
-      advice = `Your BMI of ${bmi} places you in the underweight range. Focus on nutrient-dense foods to gain healthy weight gradually. Consider consulting a dietitian to build a meal plan. Strength training can help build muscle mass while improving overall health.`;
-    } else if (bmi < 25) {
-      status = 'Normal Weight'; color = 'var(--accent)'; risk = 'Low';
-      advice = `Excellent — your BMI of ${bmi} falls in the healthy range. Maintain this with regular exercise (150+ min/week of moderate activity) and a balanced diet. Continue tracking your metrics to catch any early changes.`;
-    } else if (bmi < 30) {
-      status = 'Overweight'; color = '#ffc832'; risk = 'Moderate';
-      advice = `Your BMI of ${bmi} is in the overweight range. A modest reduction of 500 kcal/day below your TDEE (${tdee} kcal) can lead to ~0.5 kg/week of fat loss. Pair this with cardio and strength training for best results.`;
-    } else {
-      status = 'Obese'; color = 'var(--warn)'; risk = 'High';
-      advice = `Your BMI of ${bmi} indicates obesity, which increases risk of cardiovascular disease, type 2 diabetes, and joint problems. We strongly recommend consulting your doctor to build a safe, sustainable plan. Small daily changes — 20 min walks, portion control — compound significantly over time.`;
-    }
-
-    document.getElementById('result-bmi-num').textContent = bmi;
-    document.getElementById('result-bmi-num').style.color = color;
-    document.getElementById('result-bmi-status').textContent = status;
-    document.getElementById('result-ideal').textContent = `${minIdeal}–${maxIdeal} kg`;
-    document.getElementById('result-bmr').textContent = `${Math.round(bmr).toLocaleString()} kcal`;
-    document.getElementById('result-tdee').textContent = `${tdee.toLocaleString()} kcal`;
-    document.getElementById('result-risk').textContent = risk;
-    document.getElementById('result-risk').style.color = color;
-    document.getElementById('result-advice').textContent = advice;
-    document.getElementById('bmi-result-section').style.display = 'block';
-    document.getElementById('bmi-result-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
-  /* LOG ACTIVITY */
-  const ACTIVITY_ICONS = { Running:'🏃', Cycling:'🚴', Swimming:'🏊', Walking:'🚶', 'Weight Training':'🏋️', Yoga:'🧘', HIIT:'⚡', Basketball:'🏀', Football:'⚽', Other:'🏃' };
-  const CAL_MET = { Running:9.8, Cycling:7.5, Swimming:8.0, Walking:3.5, 'Weight Training':5.0, Yoga:2.8, HIIT:10.0, Basketball:7.0, Football:7.5, Other:5.0 };
-  function logActivity() {
-    const type = document.getElementById('act-type').value;
-    const dur = parseInt(document.getElementById('act-duration').value);
-    const dist = document.getElementById('act-distance').value;
-    const intensity = document.getElementById('act-intensity').value;
-    if (!dur) { showToast('Please enter duration'); return; }
-    const MET = CAL_MET[type] || 5;
-    const multiplier = { Light: 0.7, Moderate: 1.0, Vigorous: 1.3, 'Max effort': 1.6 }[intensity] || 1;
-    const cals = Math.round(MET * multiplier * 70 * (dur / 60));
-    const intensityTag = { Light: 'tag-blue', Moderate: 'tag-yellow', Vigorous: 'tag-orange', 'Max effort': 'tag-red' }[intensity] || 'tag-yellow';
-    const tbody = document.getElementById('history-body');
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td style="color:var(--muted);font-size:13px;">Today</td>
-      <td><div style="display:flex;align-items:center;gap:8px;"><span>${ACTIVITY_ICONS[type]||'🏃'}</span> ${type}</div></td>
-      <td><span style="font-family:'DM Mono',monospace;">${dur} min</span></td>
-      <td>${dist ? dist + ' km' : '—'}</td>
-      <td><span style="color:var(--accent);font-family:'DM Mono',monospace;">${cals} kcal</span></td>
-      <td><span class="tag ${intensityTag}">${intensity}</span></td>
-      <td><button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;" onclick="this.closest('tr').remove()">✕</button></td>
-    `;
-    tbody.prepend(row);
-    document.getElementById('act-duration').value = '';
-    document.getElementById('act-distance').value = '';
-    showToast(`✓ ${type} logged — ${cals} kcal`);
-  }
+/* init */
+showPage('home');
 </script>
 </body>
 </html>
